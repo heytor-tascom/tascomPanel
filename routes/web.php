@@ -29,11 +29,5 @@ Route::group(['namespace' => 'Painel', 'prefix' => 'painel'], function () {
     Route::get('/checagem', 'Painel\ChecagemController@index')->name('painel.checagem');
 });
 
-<<<<<<< HEAD
-Route::get('/teste');
-=======
 Route::get('/marlus', 'Painel\ChecagemController@index')->name('painel.checagem');
-
-
-
->>>>>>> ec062feb17d516b77defa5d46c94af54513a3279
+Route::get('/heytor', 'Painel\ChecagemController@index')->name('painel.checagem');
