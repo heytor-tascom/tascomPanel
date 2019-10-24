@@ -29,4 +29,7 @@ Route::group(['namespace' => 'Painel', 'prefix' => 'painel'], function () {
     Route::get('/checagem', 'Painel\ChecagemController@index')->name('painel.checagem');
 });
 
+Route::get('/marlus', 'Painel\ChecagemController@index')->name('painel.checagem');
+
+
 
