@@ -1,0 +1,97 @@
+body {
+    /* font-family: 'Roboto', sans-serif; */
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 10px;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #CFD5D9;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    background: #B5BFC6;
+    border-radius: 10px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.checagemAtrasada {
+    color: red;
+    /* font-weight: 600; */
+}
+
+.checagemProxima {
+    color: #f1c40f;
+    /* font-weight: 600; */
+}
+
+table thead th {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 15px !important;
+    text-transform: uppercase;
+    color: #8b8989;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+table tbody {
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.bg-gray {
+    background: #F5F5F5;
+}
+
+.bg-gray-strong {
+    background: #CACACA;
+}
+
+.text-black {
+    color: #000;
+}
+
+.text-painel {
+    line-height: 69px;
+    font-family: 'roboto condensed';
+    font-size: 23px;
+    letter-spacing: 1px;
+    /* padding-left: 40px; */
+}
+
+.legendas {
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+    font-weight: 900;
+    font-family: 'roboto condensed';
+    color: #888;
+}
+
+.mt--1,.my--1{
+    margin-top:-.25rem !important
+}
+
+.mt--2,.my--2 {
+    margin-top:-.5rem !important
+}
+
+.logo-header {
+    width: 150px;
+    padding: 10px 10px;
+    border-right: solid 1px #eee;
+}
+
+.logo-header img {
+    width: 80px;
+}
