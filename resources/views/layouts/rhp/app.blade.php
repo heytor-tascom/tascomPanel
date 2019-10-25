@@ -30,7 +30,7 @@
     <script src="{{ asset('rhp') }}/js/core/popper.min.js"></script>
     <script src="{{ asset('rhp') }}/js/core/bootstrap-material-design.min.js"></script>
     <script src="{{ asset('rhp') }}/plugins/bootstrap-select/js/bootstrap-select.min.js"></script>
-    <script src="{{ asset('rhp') }}/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>>
+    <script src="{{ asset('rhp') }}/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
 
     @stack('script')
 </body>

@@ -12,8 +12,9 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('home.produtos.index');
+});	
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -25,9 +26,12 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'ProfileController@password']);
 });
 
-Route::group(['namespace' => 'Painel', 'prefix' => 'painel'], function () {
-    Route::get('/checagem', 'Painel\ChecagemController@index')->name('painel.checagem');
+// Rotas não autenticadas dos produtos
+Route::group(['namespace' => 'Home\Produtos', 'prefix' => 'produtos'], function () {
+    Route::get('/', 'ProdutoController@index')->name('produtos');
 });
 
-Route::get('/marlus', 'Painel\ChecagemController@index')->name('painel.checagem');
-Route::get('/heytor', 'Painel\ChecagemController@index')->name('painel.checagem');
+// Rotas não autenticadas dos painéis
+Route::group(['namespace' => 'Home\Produtos\Paineis\Enfermagem', 'prefix' => 'produtos/painel/enfermagem'], function () {
+    Route::get('/checagem', 'PainelEnfChecagemController@index')->name('painel.enfermagem.checagem');
+});
