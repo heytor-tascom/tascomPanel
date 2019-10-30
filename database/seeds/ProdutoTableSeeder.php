@@ -14,12 +14,13 @@ class ProdutoTableSeeder extends Seeder
     {
         $produtos = [
             [
-                'nm_produto' => 'FARMACIA UTI',
-                'ds_produto' => 'FARMACIA UTI',
+                'nm_produto' => 'PAINEL DE CHECAGEM',
+                'ds_produto' => 'Painel para auxíliar a enfermagem nos tempos de checagem',
                 'tipo_produto_id' => 1,
-                'nm_rota' => 'produto.painel.farmacia.uti',
+                'ambiente_id' => 3,
+                'nm_rota' => 'painel.enfermagem.checagem',
+                'ds_parametros' => 'Estoque e Setores',
                 'nr_ordem' => 1,
-                'ambiente' => 'DEV',
                 'usuario_id' => 1,
             ],
         ];

@@ -11,9 +11,11 @@
 |
 */
 
-Route::get('/', function () {
-    return view('home.produtos.index');
-});	
+// Route::get('/', function () {
+//     return view('home.produtos.index');
+// });	
+
+Route::get('/', 'HomeController@index');
 
 Auth::routes();
 
@@ -34,4 +36,5 @@ Route::group(['namespace' => 'Home\Produtos', 'prefix' => 'produtos'], function 
 // Rotas não autenticadas dos painéis
 Route::group(['namespace' => 'Home\Produtos\Paineis\Enfermagem', 'prefix' => 'produtos/painel/enfermagem'], function () {
     Route::get('/checagem', 'PainelEnfChecagemController@index')->name('painel.enfermagem.checagem');
+    Route::get('/checagem/{atendimentoId}/detalhes', 'PainelEnfChecagemController@details')->name('painel.enfermagem.checagem.detalhes');
 });

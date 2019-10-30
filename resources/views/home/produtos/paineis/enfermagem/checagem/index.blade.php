@@ -35,7 +35,7 @@
                             <td class="text-center">{{ date("d/m/Y", strtotime($atendimento->dt_atendimento)) }}</td>
                             <td class="text-center"></td>
                             <td>{{ !empty($atendimento->paciente->nm_social) ? $atendimento->paciente->nm_social : '-' }}</td>
-                            <td class="text-center"><i class="fas fa-link"></i></td>
+                            <td class="text-center"><a href="javascript:void(0)" data-toggle="modal" data-target="#modalDetalhes" onclick="viewDetails({cdAtendimento: '{{ $atendimento->cd_atendimento }}', nmPaciente: '{{ $atendimento->paciente->nm_paciente }}', dtNascimento: '{{ $atendimento->paciente->dt_nascimento }}'})"><i class="fas fa-link"></i></a></td>
                         </tr>
                         @empty    
                         @endforelse
@@ -45,4 +45,40 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="modalDetalhes" tabindex="-1" role="dialog" aria-labelledby="modalDetalhes" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-body p-0">
+        
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
+
+@push('scripts')
+<script>
+    function viewDetails(a)
+    {
+        console.table(a);
+
+        $("#modalDetalhes div.modal-body").html(`<div class="text-center"><i class="fas fa-spinner fa-spin"></i><p>Carregando...</p></div>`);
+
+        let url = '{{ route('painel.enfermagem.checagem.detalhes', ['atendimentoId' => "#atendimento#"]) }}';
+        url = url.replace("#atendimento#", a.cdAtendimento);
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: {
+                pacienteData: a,
+            },
+            success: function(response) {
+                $("#modalDetalhes div.modal-body").html(response);
+            }
+        });
+    }
+</script>
+@endpush

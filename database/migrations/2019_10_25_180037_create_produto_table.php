@@ -15,10 +15,12 @@ class CreateProdutoTable extends Migration
             $table->string('ds_produto')->nullable();
             $table->bigInteger('tipo_produto_id')->unsigned();
             $table->foreign('tipo_produto_id')->references('id')->on('tipo_produto');
+            $table->bigInteger('ambiente_id')->unsigned();
+            $table->foreign('ambiente_id')->references('id')->on('ambientes');            
             $table->string('nm_rota');
+            $table->string('ds_parametros');
             $table->boolean('ativo')->default(1);
             $table->integer('nr_ordem');
-            $table->enum('ambiente', ['PRD','HOM','DEV'])->comment('PRD - Produção | HOM - Homologação | DEV - Desenvolvimento');
             $table->bigInteger('usuario_id')->unsigned();
             $table->foreign('usuario_id')->references('id')->on('users');
             $table->timestamps();

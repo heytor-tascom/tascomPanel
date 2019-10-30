@@ -11,4 +11,8 @@ class Produto extends Model
     public function tipoProduto(){
         return $this->belongsTo(TipoProduto::class, 'tipo_produto_id');
     }
+
+    public function ambiente(){
+        return $this->belongsTo(Ambiente::class, 'ambiente_id');
+    }
 }
