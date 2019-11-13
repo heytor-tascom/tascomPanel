@@ -1,0 +1,8 @@
+.pointer {
+    cursor: pointer;
+}
+
+.tascom-bg-gradient-primary
+{
+    background: linear-gradient(87deg, #59d463 0, #5ee4bc 100%) !important;
+}

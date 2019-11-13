@@ -8,11 +8,18 @@ class Produto extends Model
 {
     protected $table = 'produto';
 
-    public function tipoProduto(){
+    public function tipoProduto()
+    {
         return $this->belongsTo(TipoProduto::class, 'tipo_produto_id');
     }
 
-    public function ambiente(){
+    public function ambiente()
+    {
         return $this->belongsTo(Ambiente::class, 'ambiente_id');
+    }
+
+    public function produtosCliente()
+    {
+        return $this->hasMany(ClienteProduto::class, 'produto_id');
     }
 }

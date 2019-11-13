@@ -23,6 +23,7 @@ class CreateProdutoTable extends Migration
             $table->integer('nr_ordem');
             $table->bigInteger('usuario_id')->unsigned();
             $table->foreign('usuario_id')->references('id')->on('users');
+            $table->integer('tempo_atualizacao')->nullable();
             $table->timestamps();
         });
     }

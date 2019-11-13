@@ -540,7 +540,7 @@ dfn {
 
 b,
 strong {
-  font-weight: bolder;
+  font-weight: bold;
 }
 
 small {
@@ -2912,10 +2912,10 @@ fieldset:disabled a.btn {
 }
 
 .btn-light {
-  color: #212529;
-  background-color: #f8f9fa;
-  border-color: #f8f9fa;
-  box-shadow: none;
+  color: #212529 !important;
+  background-color: #f8f9fa !important;
+  border-color: #f8f9fa !important;
+  box-shadow: none !important;
 }
 
 .btn-light:hover {
