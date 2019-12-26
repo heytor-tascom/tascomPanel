@@ -38,7 +38,11 @@ Route::group(['namespace' => 'Home\Produtos', 'prefix' => 'produtos'], function 
 // Rotas não autenticadas dos painéis da enfermagem
 Route::group(['namespace' => 'Home\Produtos\Paineis\Enfermagem', 'prefix' => 'produtos/painel/enfermagem'], function () {
     Route::get('/checagem', 'PainelEnfChecagemController@index')->name('painel.enfermagem.checagem');
+    Route::get('/checagem/?tipoVisualizacao=d8375b48751caf44e5c23d4b0dcc2984d6081784', 'PainelEnfChecagemController@index')->name('painel.enfermagem.checagem.gestor');
     Route::get('/checagem/{atendimentoId}/detalhes', 'PainelEnfChecagemController@details')->name('painel.enfermagem.checagem.detalhes');
+	Route::get('/assistencial', 'PainelEnfChecagemController@index')->name('painel.enfermagem.assistencial');
+	Route::get('/gestao-a-vista', ['uses' => 'PainelEnfGestaoVista@index'])->name('painel.enfermagem.gesta.vista.setores');
+	Route::get('/gestao-a-vista/{setorId?}', ['uses' => 'PainelEnfGestaoVista@index'])->name('painel.enfermagem.gesta.vista');
 });
 
 // Rotas não autenticadas dos painéis da farmacia 
@@ -46,6 +50,13 @@ Route::group(['namespace' => 'Home\Produtos\Paineis\Farmacia', 'prefix' => 'prod
 	Route::get('/central', 'central\PainelFarmCentralController@index')->name('painel.farmacia.central');
 	Route::get('/uti', 'uti\PainelFarmUtiController@index')->name('painel.farmacia.uti');
 	Route::get('/oncologia', 'oncologia\PainelFarmOncoController@index')->name('painel.farmacia.oncologia');
+	Route::get('/oncologia?tipoVisualizacao=d8375b48751caf44e5c23d4b0dcc2984d6081784', 'oncologia\PainelFarmOncoController@index')->name('painel.farmacia.oncologia.gestor');
+	Route::get('/oncologia/{atendimentoId}/{preMedId}/{solSaiProId}/detalhes', 'oncologia\PainelFarmOncoController@details')->name('painel.farmacia.oncologia.detalhes');
+});
+
+// Rotas não autenticadas dos painéis do Bloco cirurgico
+Route::group(['namespace' => 'Home\Produtos\Paineis\BlocoCirurgico', 'prefix' => 'produtos/painel/blocoCirurgico'], function () {
+	Route::get('/acompCirurgia', 'PainelAcompCirurgiaController@index')->name('painel.blocoCirurgico.acompCirurgia');
 });
 
 /************************************************************
@@ -66,7 +77,7 @@ Route::group(['middleware' => 'auth', 'namespace' => 'Painel', 'prefix' => 'pain
 	Route::get('/', 'ProdutoController@index')->name('painel.config.produto');
 	Route::get('/create', 'ProdutoController@create')->name('painel.config.produto.create');
 	Route::post('/store', 'ProdutoController@store')->name('painel.config.produto.store');
-	Route::get('/{id}', ['uses' => 'ProdutoController@view'])->name('painel.config.produto.view');
+	Route::get('/{id}', ['uses' => 'ProdutoController@edit'])->name('painel.config.produto.edit');
 	Route::post('/{id}/update', ['uses' => 'ProdutoController@update'])->name('painel.config.produto.update');
 });
 
@@ -84,7 +95,7 @@ Route::group(['middleware' => 'auth', 'namespace' => 'Painel', 'prefix' => 'pain
 	Route::get('/', 'PlanoController@index')->name('painel.config.plano');
 	Route::get('/create', 'PlanoController@create')->name('painel.config.plano.create');
 	Route::post('/store', 'PlanoController@store')->name('painel.config.plano.store');
-	Route::get('/{id}', ['uses' => 'PlanoController@view'])->name('painel.config.plano.view');
+	Route::get('/{id}', ['uses' => 'PlanoController@edit'])->name('painel.config.plano.edit');
 	Route::post('/{id}/update', ['uses' => 'PlanoController@update'])->name('painel.config.plano.update');
 });
 

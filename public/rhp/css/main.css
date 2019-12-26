@@ -99,3 +99,13 @@ table tbody {
 .logo-header img {
     width: 80px;
 }
+
+@keyframes danger-animation {
+    0% { color: #ffeb3b; transition: ease-in-out .5s; }
+    100% { color: #f44336; transition: ease-in-out .5s; }
+}
+
+.danger-animation {
+    animation-name: danger-animation;
+    animation-duration: 1s;
+}

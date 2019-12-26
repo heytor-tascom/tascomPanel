@@ -61,10 +61,10 @@
                             $popoverContent .= ($horario->sn_suspenso == 'S') ? '<div class="mb-3"><small>Justificativa:</small><div class="text-justify"><strong>'.$horario->ds_justificativa.'</strong></div></div>' : null;
                             $popoverContent .= '<ul class="list-unstyled">';
                             $popoverContent .= '<li><small>Última Modificação:</small><br/><strong>'.(($horario->dh_modificacao) ? $horario->dh_modificacao : "-").'</strong></li>';
-                            $popoverContent .= '<li><small>Aprazamento:</small><br/><strong>'.(($horario->dh_aprazado) ? $horario->dh_aprazado : "-").'</strong></li>';
+                            $popoverContent .= '<li><small>Aprazamento:</small><br/><strong>'.(($horario->dh_medicacao) ? $horario->dh_medicacao : "-").'</strong></li>';
                             $popoverContent .= '<li><small>Avaliação Farmacêutica:</small><br/><strong>'.(($horario->dh_avaliacao) ? $horario->dh_avaliacao : "-").'</strong></li>';
                             $popoverContent .= '<li><small>Dispensação:</small><br/><strong>'.(($horario->dh_mvto_estoque) ? $horario->dh_mvto_estoque : "-").'</strong></li>';
-                            $popoverContent .= '<li><small>Recebimento:</small><br/><strong>-</strong></li>';
+                            $popoverContent .= '<li><small>Recebimento:</small><br/><strong>'.(($horario->dh_recebimento) ? $horario->dh_recebimento : "-").'</strong></li>';
                             $popoverContent .= '<li><small>Checagem:</small><br/><strong>'.(($horario->dh_checagem) ? $horario->dh_checagem : "-").'</strong></li>';
                             // $popoverContent .= '<li><small>Horário Anterior:</small><br/><strong>'.(($horario->DH_MEDICACAO_ANTERIOR) ? $horario->DH_MEDICACAO_ANTERIOR : '-').'</strong></li>';
                             $popoverContent .= '</ul>';
@@ -110,6 +110,12 @@
                                         {{ $horario->hr_medicacao }}
                                         <br>
                                         <small>ATRASADO</small>
+                                    </div>
+                                    @else
+                                    <div class="card-body p-1 text-center">
+                                        {{ $horario->hr_medicacao }}
+                                        <br>
+                                        <span class="badge badge-primary">APRAZADO</span>
                                     </div>
                                     @endif
                                 </div>

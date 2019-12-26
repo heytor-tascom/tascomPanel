@@ -16,11 +16,17 @@
                         <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <strong class="text-gray-dark" id="id{{ $produto->id }}">{{ $produto->nm_produto }}</strong>
+                                <div class="float-right">
+                                    @if($produto->id == 8)
+                                    <a class="btn btn-secondary btn-sm" href="{{ $produto->ds_produto }}" target="_blank">Abrir</a>
+                                    @else
+                                    <a class="btn btn-secondary btn-sm" href="{{ route($produto->nm_rota) }}" target="_blank">Abrir</a>
+                                    @endif
+                                    <button class="btn btn-secondary btn-sm" onclick="editarProduto({ 'id': {{ $produto->id }}, 'nm_produto': '{{ $produto->nm_produto }}', 'tempo_atualizacao': '{{ $produto->tempo_atualizacao }}' })" data-toggle="modal" id="{{ $produto->id }}" data-target="#exampleModal">Editar</button>
+                                </div>
                             </div>
-                                <a class="btn btn-secondary" href="{{ route($produto->nm_rota) }}" target="_blank">Abrir</a>
-                                <button class="btn btn-secondary" onclick="editarProduto({ 'id': {{ $produto->id }}, 'nm_produto': '{{ $produto->nm_produto }}', 'tempo_atualizacao': '{{ $produto->tempo_atualizacao }}' })" data-toggle="modal" id="{{ $produto->id }}" data-target="#exampleModal">Editar</button>
                             
-                            <span class="d-block">Parametros: {{ $produto->ds_parametros }}</span>
+                            <span class="d-block">Parametros: {{ $produto->ds_parametros }}</span>                            
                         </div>
                     </div>    
                         

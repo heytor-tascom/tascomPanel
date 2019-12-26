@@ -39,6 +39,7 @@ class PainelFarmUtiController extends Controller
                                   ->join('setor', 'setor.cd_setor', '=', 'config_estoque.cd_setor')
                                   ->whereIn('setor.cd_setor', $filterSetores)
                                   ->selectRaw('DISTINCT estoque.cd_estoque as cd_estoque, ds_estoque')
+                                  ->orderBy('estoque.ds_estoque')
                                   ->get();
       }
 

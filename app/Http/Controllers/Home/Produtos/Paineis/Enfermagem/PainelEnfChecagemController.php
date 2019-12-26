@@ -20,10 +20,11 @@ class PainelEnfChecagemController extends Controller
 {
     public function index(Request $request)
     {
-        $title              = Produto::find(1);
-        $title              = $title->nm_produto;
+        $produto            = Produto::find(1);
+        $title              = "PAINEL DE CHECAGEM";
         $filterSetores      = [];
         $tipoVisualizacao   = null;
+        $refreshTime        = $produto->tempo_atualizacao;
 
         $params             = $request->only('setores', 'tipoVisualizacao');
 
@@ -34,6 +35,7 @@ class PainelEnfChecagemController extends Controller
 
         if (isset($params['tipoVisualizacao']) && $params['tipoVisualizacao'] == 'd8375b48751caf44e5c23d4b0dcc2984d6081784') {
             $tipoVisualizacao = $params['tipoVisualizacao'];
+            $title            = "GESTÃO DO PAINEL DE CHECAGEM";
         }
 
         $setor   = new Setor;
@@ -48,6 +50,8 @@ class PainelEnfChecagemController extends Controller
                                     $query->select("paciente.cd_paciente", "paciente.nm_paciente", "paciente.nm_social_paciente", "paciente.dt_nascimento");
                                 }])
                                 ->select("atendime.cd_atendimento", "atendime.cd_paciente", "atendime.dt_atendimento", "setor.nm_setor", "leito.ds_leito")
+                                ->orderBy("setor.nm_setor", "ASC")
+                                ->orderBy("leito.ds_leito", "ASC")
                                 ->get();
 
         foreach($atendimentos as $key => $atendimento) {
@@ -55,7 +59,7 @@ class PainelEnfChecagemController extends Controller
             $atendimentos[$key]->status = isset($statusPaciente[0]) ? $statusPaciente[0] : null;
         }
 
-        return view("home.produtos.paineis.enfermagem.checagem.index", compact("title", "atendimentos", "setores", "tipoVisualizacao"));
+        return view("home.produtos.paineis.enfermagem.checagem.index", compact("title", "atendimentos", "setores", "tipoVisualizacao", "refreshTime"));
     }
 
     public function details($atendimentoId, Request $request)
@@ -80,14 +84,14 @@ class PainelEnfChecagemController extends Controller
                                                 ->whereNotIn('tip_presc.cd_tip_esq', ['EXL', 'EXI'])
                                                 ->whereRaw('(SELECT count(*) FROM hritpre_med ipm WHERE cd_itpre_med = itpre_med.cd_itpre_med) > 0')
                                                 ->with([
-                                                'tipoItemPrescricao' => function($query) {
-                                                    $query->select("cd_tip_presc", "ds_tip_presc");
-                                                }
-                                            ])
-                                            ->select("cd_pre_med", "cd_itpre_med", "tip_presc.cd_tip_presc", "tip_fre.ds_tip_fre", "sn_cancelado", "dh_cancelado", "sn_urgente");
+                                                    'tipoItemPrescricao' => function($query) {
+                                                        $query->select("cd_tip_presc", "ds_tip_presc");
+                                                    }
+                                                ])
+                                                ->select("cd_pre_med", "cd_itpre_med", "tip_presc.cd_tip_presc", "tip_fre.ds_tip_fre", "sn_cancelado", "dh_cancelado", "sn_urgente");
                                         }
                                     ])
-                                    ->select("pre_med.cd_pre_med", "pre_med.cd_prestador", "pre_med.dt_validade", "pre_med.dh_criacao", DB::raw("(SELECT count(*) FROM itpre_med WHERE itpre_med.cd_pre_med = pre_med.cd_pre_med AND itpre_med.sn_urgente = 'S') as itens_urgente"))
+                                    ->select("pre_med.cd_pre_med", "pre_med.cd_prestador", "pre_med.dt_validade", "pre_med.dh_criacao", DB::raw("(SELECT count(*) FROM itpre_med, hritpre_med WHERE itpre_med.cd_pre_med = pre_med.cd_pre_med AND itpre_med.cd_itpre_med = hritpre_med.cd_itpre_med AND itpre_med.sn_urgente = 'S') as itens_urgente"))
                                     ->get();
                                     
         return view('home.produtos.paineis.enfermagem.checagem.components.detalhes', compact('pacienteData', 'prescricaoData'));
@@ -135,12 +139,43 @@ class PainelEnfChecagemController extends Controller
                                     END
                                     AS tempo_prox_minutos,
                                     (
-                                    SELECT  TO_CHAR(Max(PW_DOCUMENTO_CLINICO.DH_FECHAMENTO),'DD/MM/RRRR HH24:MI:SS')
-                                    FROM    PW_AVALIACAO_PRE_MED,
-                                            PW_DOCUMENTO_CLINICO 
-                                    WHERE   PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO IS NOT NULL
-                                    AND     PW_AVALIACAO_PRE_MED.CD_DOCUMENTO_CLINICO = PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
-                                    AND     PW_AVALIACAO_PRE_MED.CD_PRE_MED           = pre_med.cd_pre_med
+                                        SELECT	TO_CHAR(Max(ie.DT_GRAVACAO),'DD/MM/RRRR HH24:MI:SS')
+                                        FROM 	SOLSAI_PRO s,
+                                                ITSOLSAI_PRO its,
+                                                ITMVTO_ESTOQUE ie
+                                        WHERE 	s.CD_SOLSAI_PRO 	= its.CD_SOLSAI_PRO
+                                        AND 	its.CD_ITSOLSAI_PRO = ie.CD_ITSOLSAI_PRO
+                                        AND 	its.CD_ITPRE_MED	= ITPRE_MED.CD_ITPRE_MED
+                                    ) as dh_devolucao,
+                                    (
+                                        SELECT	TO_CHAR(Max(mve.HR_ENTREGA),'DD/MM/RRRR HH24:MI:SS')
+                                        FROM 	SOLSAI_PRO s,
+                                                ITSOLSAI_PRO its,
+                                                MVTO_ESTOQUE mve,
+                                                ITMVTO_ESTOQUE ie
+                                        WHERE 	s.CD_SOLSAI_PRO 	= its.CD_SOLSAI_PRO
+                                        AND 	its.CD_ITSOLSAI_PRO = ie.CD_ITSOLSAI_PRO
+                                        AND  	ie.CD_MVTO_ESTOQUE	= MVE.CD_MVTO_ESTOQUE
+                                        AND 	mve.CD_SOLSAI_PRO 	= s.CD_SOLSAI_PRO
+                                        AND 	its.CD_ITPRE_MED	= ITPRE_MED.CD_ITPRE_MED
+                                    ) as dh_recebimento,
+                                    -- (
+                                    -- SELECT  TO_CHAR(Max(PW_DOCUMENTO_CLINICO.DH_FECHAMENTO),'DD/MM/RRRR HH24:MI:SS')
+                                    -- FROM    PW_AVALIACAO_PRE_MED,
+                                    --         PW_DOCUMENTO_CLINICO 
+                                    -- WHERE   PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO IS NOT NULL
+                                    -- AND     PW_AVALIACAO_PRE_MED.CD_DOCUMENTO_CLINICO = PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
+                                    -- AND     PW_AVALIACAO_PRE_MED.CD_PRE_MED           = pre_med.cd_pre_med
+                                    -- ) AS dh_avaliacao,
+                                    (
+                                        SELECT  TO_CHAR(Max(PW_DOCUMENTO_CLINICO.DH_FECHAMENTO),'DD/MM/RRRR HH24:MI:SS')
+                                        FROM    PW_AVALIACAO_PRE_MED,
+                                                PW_AVALIACAO_ITPRE_MED,
+                                                PW_DOCUMENTO_CLINICO 
+                                        WHERE   PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO IS NOT NULL
+                                        AND     PW_AVALIACAO_PRE_MED.CD_DOCUMENTO_CLINICO = PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
+                                        AND		PW_AVALIACAO_PRE_MED.CD_AVALIACAO_PRE_MED = PW_AVALIACAO_ITPRE_MED.CD_AVALIACAO_PRE_MED
+                                        AND     PW_AVALIACAO_ITPRE_MED.CD_ITPRE_MED       = hritpre_med.cd_itpre_med
                                     ) AS dh_avaliacao,
                                     hritpre_cons.nm_usuario as nm_usuario_checagem,
                                     (
@@ -173,114 +208,223 @@ class PainelEnfChecagemController extends Controller
     {
         return DB::connection('oracle')
                     ->select("SELECT 	cd_atendimento,
-                                        COUNT(CASE WHEN tempo_prox_minutos >= 0 THEN 1 END) AS total_ate_1h,
-                                        COUNT(CASE WHEN tempo_prox_minutos < 0 THEN 1 END) AS total_atrasado,
-                                        MIN(dh_aprazado) AS dh_aprazado,
-                                        MIN(dh_avaliacao) AS dh_avaliacao,
-                                        MIN(dh_mvto_estoque) AS dh_mvto_estoque
-                                FROM 	(
-                                    SELECT  pre_med.cd_atendimento,
-                                            CASE
-                                            WHEN dh_checagem IS NULL THEN round((hritpre_med.dh_medicacao - SYSDATE)*1440)
-                                            ELSE NULL
-                                            END
-                                            AS tempo_prox_minutos,
-                                            (
-                                            SELECT  TO_CHAR(Max(DH_MODIFICACAO),'DD/MM/RRRR HH24:MI:SS')
-                                            FROM    LOG_HRITPRE_MED
-                                            WHERE   CD_ITPRE_MED      = ITPRE_MED.CD_ITPRE_MED
-                                            AND     DH_MEDICACAO_NOVA = hritpre_med.DH_MEDICACAO
-                                            AND     TP_ACAO           IN ('IH', 'UH')
-                                            ) as dh_aprazado,
-                                            (
-                                            SELECT  TO_CHAR(Max(PW_DOCUMENTO_CLINICO.DH_FECHAMENTO),'DD/MM/RRRR HH24:MI:SS')
-                                            FROM    PW_AVALIACAO_PRE_MED,
-                                                    PW_DOCUMENTO_CLINICO 
-                                            WHERE   PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO IS NOT NULL
-                                            AND     PW_AVALIACAO_PRE_MED.CD_DOCUMENTO_CLINICO = PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
-                                            AND     PW_AVALIACAO_PRE_MED.CD_PRE_MED           = pre_med.cd_pre_med
-                                            ) AS dh_avaliacao,
-                                            (
-                                                SELECT 	TO_CHAR(MAX(MVTO_ESTOQUE.HR_MVTO_ESTOQUE),'DD/MM/RRRR HH24:MI:SS')
-                                                FROM 	HRITSOLSAI_PRO,
-                                                        ITSOLSAI_PRO,
-                                                        MVTO_ESTOQUE
-                                                WHERE 	HRITSOLSAI_PRO.CD_ITPRE_MED     = HRITPRE_MED.CD_ITPRE_MED
-                                                AND		HRITSOLSAI_PRO.DH_MEDICACAO     = HRITPRE_MED.DH_MEDICACAO
-                                                AND		HRITSOLSAI_PRO.CD_ITSOLSAI_PRO  = ITSOLSAI_PRO.CD_ITSOLSAI_PRO
-                                                AND		MVTO_ESTOQUE.CD_SOLSAI_PRO      = ITSOLSAI_PRO.CD_SOLSAI_PRO
-                                            ) AS dh_mvto_estoque
-                                    FROM    atendime,
-                                            pre_med,
-                                            itpre_med,      
-                                            hritpre_med,
-                                            hritpre_cons, 
-                                            tip_presc
-                                    WHERE   atendime.cd_atendimento         = pre_med.cd_atendimento
-                                    AND     pre_med.cd_pre_med              = itpre_med.cd_pre_med
-                                    AND     tip_presc.cd_tip_presc          = itpre_med.cd_tip_presc     
-                                    AND     itpre_med.cd_itpre_med          = hritpre_med.cd_itpre_med
-                                    AND     hritpre_cons.cd_itpre_med(+)    = hritpre_med.cd_itpre_med
-                                    AND     hritpre_cons.dh_medicacao(+)    = hritpre_med.dh_medicacao
-                                    AND     pre_med.cd_atendimento          = :cdAtendimento
-                                    AND     pre_med.dt_validade             >= SYSDATE
-                                    AND     (hritpre_cons.sn_suspenso  		IS NULL OR hritpre_cons.sn_suspenso = 'N')
-                                    AND		hritpre_cons.dh_checagem 		IS NULL
-                                    AND		round((hritpre_med.dh_medicacao - SYSDATE)*1440) BETWEEN 0 AND 60
-                                    
-                                    UNION ALL
-                                    
-                                    SELECT  pre_med.cd_atendimento,
-                                            CASE
-                                            WHEN dh_checagem IS NULL THEN round((hritpre_med.dh_medicacao - SYSDATE)*1440)
-                                            ELSE NULL
-                                            END
-                                            AS tempo_prox_minutos,
-                                            (
-                                            SELECT  TO_CHAR(Max(DH_MODIFICACAO),'DD/MM/RRRR HH24:MI:SS')
-                                            FROM    LOG_HRITPRE_MED
-                                            WHERE   CD_ITPRE_MED      = ITPRE_MED.CD_ITPRE_MED
-                                            AND     DH_MEDICACAO_NOVA = hritpre_med.DH_MEDICACAO
-                                            AND     TP_ACAO           IN ('IH', 'UH')
-                                            ) as dh_aprazado,
-                                            (
-                                            SELECT  TO_CHAR(Max(PW_DOCUMENTO_CLINICO.DH_FECHAMENTO),'DD/MM/RRRR HH24:MI:SS')
-                                            FROM    PW_AVALIACAO_PRE_MED,
-                                                    PW_DOCUMENTO_CLINICO 
-                                            WHERE   PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO IS NOT NULL
-                                            AND     PW_AVALIACAO_PRE_MED.CD_DOCUMENTO_CLINICO = PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
-                                            AND     PW_AVALIACAO_PRE_MED.CD_PRE_MED           = pre_med.cd_pre_med
-                                            ) AS dh_avaliacao,
-                                            (
-                                                SELECT 	TO_CHAR(MAX(MVTO_ESTOQUE.HR_MVTO_ESTOQUE),'DD/MM/RRRR HH24:MI:SS')
-                                                FROM 	HRITSOLSAI_PRO,
-                                                        ITSOLSAI_PRO,
-                                                        MVTO_ESTOQUE
-                                                WHERE 	HRITSOLSAI_PRO.CD_ITPRE_MED     = HRITPRE_MED.CD_ITPRE_MED
-                                                AND		HRITSOLSAI_PRO.DH_MEDICACAO     = HRITPRE_MED.DH_MEDICACAO
-                                                AND		HRITSOLSAI_PRO.CD_ITSOLSAI_PRO  = ITSOLSAI_PRO.CD_ITSOLSAI_PRO
-                                                AND		MVTO_ESTOQUE.CD_SOLSAI_PRO      = ITSOLSAI_PRO.CD_SOLSAI_PRO
-                                            ) AS dh_mvto_estoque
-                                    FROM    atendime,
-                                            pre_med,
-                                            itpre_med,      
-                                            hritpre_med,
-                                            hritpre_cons, 
-                                            tip_presc
-                                    WHERE   atendime.cd_atendimento         = pre_med.cd_atendimento
-                                    AND     pre_med.cd_pre_med              = itpre_med.cd_pre_med
-                                    AND     tip_presc.cd_tip_presc          = itpre_med.cd_tip_presc     
-                                    AND     itpre_med.cd_itpre_med          = hritpre_med.cd_itpre_med
-                                    AND     hritpre_cons.cd_itpre_med(+)    = hritpre_med.cd_itpre_med
-                                    AND     hritpre_cons.dh_medicacao(+)    = hritpre_med.dh_medicacao
-                                    AND     pre_med.cd_atendimento          = :cdAtendimento
-                                    AND     pre_med.dt_validade             >= SYSDATE
-                                    AND     (hritpre_cons.sn_suspenso  		IS NULL OR hritpre_cons.sn_suspenso = 'N')
-                                    AND		hritpre_cons.dh_checagem 		IS NULL
-                                    AND		round((hritpre_med.dh_medicacao - SYSDATE)*1440) < 0
-                                    
-                                )
-                                GROUP BY cd_atendimento", [":cdAtendimento" => $cdAtendimento]);
+                    COUNT(CASE WHEN tempo_prox_minutos >= 0 THEN 1 END) AS total_ate_1h,
+                    COUNT(CASE WHEN tempo_prox_minutos < 0 THEN 1 END) AS total_atrasado,
+                    COUNT(CASE WHEN tempo_prox_minutos_med >= 0 THEN 1 END) AS total_ate_1h_med,
+                    COUNT(CASE WHEN tempo_prox_minutos_med < 0 THEN 1 END) AS total_atrasado_med,
+                    MIN(dh_aprazado) AS dh_aprazado,
+                    MIN(dh_avaliacao) AS dh_avaliacao,
+                    MIN(dh_mvto_estoque) AS dh_mvto_estoque
+            FROM 	(
+                SELECT  pre_med.cd_atendimento,
+                        NULL AS tempo_prox_minutos_med,
+                        CASE
+                            WHEN dh_checagem IS NULL THEN round((hritpre_med.dh_medicacao - SYSDATE)*1440)
+                        ELSE NULL
+                        END
+                        AS tempo_prox_minutos,
+                        (
+                            SELECT  TO_CHAR(Max(DH_MODIFICACAO),'DD/MM/RRRR HH24:MI:SS')
+                            FROM    LOG_HRITPRE_MED
+                            WHERE   CD_ITPRE_MED      = ITPRE_MED.CD_ITPRE_MED
+                            AND     DH_MEDICACAO_NOVA = hritpre_med.DH_MEDICACAO
+                            AND     TP_ACAO           IN ('IH', 'UH')
+                        ) as dh_aprazado,
+                        (
+                            SELECT  TO_CHAR(Max(PW_DOCUMENTO_CLINICO.DH_FECHAMENTO),'DD/MM/RRRR HH24:MI:SS')
+                            FROM    PW_AVALIACAO_PRE_MED,
+                                    PW_DOCUMENTO_CLINICO 
+                            WHERE   PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO IS NOT NULL
+                            AND     PW_AVALIACAO_PRE_MED.CD_DOCUMENTO_CLINICO = PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
+                            AND     PW_AVALIACAO_PRE_MED.CD_PRE_MED           = pre_med.cd_pre_med
+                        ) AS dh_avaliacao,
+                        (
+                            SELECT 	TO_CHAR(MAX(MVTO_ESTOQUE.HR_MVTO_ESTOQUE),'DD/MM/RRRR HH24:MI:SS')
+                            FROM 	HRITSOLSAI_PRO,
+                                    ITSOLSAI_PRO,
+                                    MVTO_ESTOQUE
+                            WHERE 	HRITSOLSAI_PRO.CD_ITPRE_MED     = HRITPRE_MED.CD_ITPRE_MED
+                            AND		HRITSOLSAI_PRO.DH_MEDICACAO     = HRITPRE_MED.DH_MEDICACAO
+                            AND		HRITSOLSAI_PRO.CD_ITSOLSAI_PRO  = ITSOLSAI_PRO.CD_ITSOLSAI_PRO
+                            AND		MVTO_ESTOQUE.CD_SOLSAI_PRO      = ITSOLSAI_PRO.CD_SOLSAI_PRO
+                        ) AS dh_mvto_estoque
+                FROM    atendime,
+                        pre_med,
+                        itpre_med,      
+                        hritpre_med,
+                        hritpre_cons, 
+                        tip_presc
+                WHERE   atendime.cd_atendimento         = pre_med.cd_atendimento
+                AND     pre_med.cd_pre_med              = itpre_med.cd_pre_med
+                AND     tip_presc.cd_tip_presc          = itpre_med.cd_tip_presc     
+                AND     itpre_med.cd_itpre_med          = hritpre_med.cd_itpre_med
+                AND     hritpre_cons.cd_itpre_med(+)    = hritpre_med.cd_itpre_med
+                AND     hritpre_cons.dh_medicacao(+)    = hritpre_med.dh_medicacao
+                AND     pre_med.cd_atendimento          = :cdAtendimento
+                AND     pre_med.dt_validade             >= SYSDATE
+                AND     (hritpre_cons.sn_suspenso  		IS NULL OR hritpre_cons.sn_suspenso = 'N')
+                AND		hritpre_cons.dh_checagem 		IS NULL
+                AND		round((hritpre_med.dh_medicacao - SYSDATE)*1440) BETWEEN 0 AND 60
+                
+                UNION ALL
+                
+                SELECT  pre_med.cd_atendimento,
+                        NULL AS tempo_prox_minutos_med,
+                        CASE
+                            WHEN dh_checagem IS NULL THEN round((hritpre_med.dh_medicacao - SYSDATE)*1440)
+                        ELSE NULL
+                        END
+                        AS tempo_prox_minutos,
+                        (
+                        SELECT  TO_CHAR(Max(DH_MODIFICACAO),'DD/MM/RRRR HH24:MI:SS')
+                        FROM    LOG_HRITPRE_MED
+                        WHERE   CD_ITPRE_MED      = ITPRE_MED.CD_ITPRE_MED
+                        AND     DH_MEDICACAO_NOVA = hritpre_med.DH_MEDICACAO
+                        AND     TP_ACAO           IN ('IH', 'UH')
+                        ) as dh_aprazado,
+                        (
+                        SELECT  TO_CHAR(Max(PW_DOCUMENTO_CLINICO.DH_FECHAMENTO),'DD/MM/RRRR HH24:MI:SS')
+                        FROM    PW_AVALIACAO_PRE_MED,
+                                PW_DOCUMENTO_CLINICO 
+                        WHERE   PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO IS NOT NULL
+                        AND     PW_AVALIACAO_PRE_MED.CD_DOCUMENTO_CLINICO = PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
+                        AND     PW_AVALIACAO_PRE_MED.CD_PRE_MED           = pre_med.cd_pre_med
+                        ) AS dh_avaliacao,
+                        (
+                            SELECT 	TO_CHAR(MAX(MVTO_ESTOQUE.HR_MVTO_ESTOQUE),'DD/MM/RRRR HH24:MI:SS')
+                            FROM 	HRITSOLSAI_PRO,
+                                    ITSOLSAI_PRO,
+                                    MVTO_ESTOQUE
+                            WHERE 	HRITSOLSAI_PRO.CD_ITPRE_MED     = HRITPRE_MED.CD_ITPRE_MED
+                            AND		HRITSOLSAI_PRO.DH_MEDICACAO     = HRITPRE_MED.DH_MEDICACAO
+                            AND		HRITSOLSAI_PRO.CD_ITSOLSAI_PRO  = ITSOLSAI_PRO.CD_ITSOLSAI_PRO
+                            AND		MVTO_ESTOQUE.CD_SOLSAI_PRO      = ITSOLSAI_PRO.CD_SOLSAI_PRO
+                        ) AS dh_mvto_estoque
+                FROM    atendime,
+                        pre_med,
+                        itpre_med,      
+                        hritpre_med,
+                        hritpre_cons, 
+                        tip_presc
+                WHERE   atendime.cd_atendimento         = pre_med.cd_atendimento
+                AND     pre_med.cd_pre_med              = itpre_med.cd_pre_med
+                AND     tip_presc.cd_tip_presc          = itpre_med.cd_tip_presc     
+                AND     itpre_med.cd_itpre_med          = hritpre_med.cd_itpre_med
+                AND     hritpre_cons.cd_itpre_med(+)    = hritpre_med.cd_itpre_med
+                AND     hritpre_cons.dh_medicacao(+)    = hritpre_med.dh_medicacao
+                AND     pre_med.cd_atendimento          = :cdAtendimento
+                AND     pre_med.dt_validade             >= SYSDATE
+                AND     (hritpre_cons.sn_suspenso  		IS NULL OR hritpre_cons.sn_suspenso = 'N')
+                AND		hritpre_cons.dh_checagem 		IS NULL
+                AND		round((hritpre_med.dh_medicacao - SYSDATE)*1440) < 0
+                
+                UNION ALL
+                
+                SELECT  pre_med.cd_atendimento,
+                        CASE
+                            WHEN dh_checagem IS NULL THEN round((hritpre_med.dh_medicacao - SYSDATE)*1440)
+                        ELSE NULL
+                        END
+                        AS tempo_prox_minutos_med,
+                        NULL AS tempo_prox_minutos,
+                        (
+                        SELECT  TO_CHAR(Max(DH_MODIFICACAO),'DD/MM/RRRR HH24:MI:SS')
+                        FROM    LOG_HRITPRE_MED
+                        WHERE   CD_ITPRE_MED      = ITPRE_MED.CD_ITPRE_MED
+                        AND     DH_MEDICACAO_NOVA = hritpre_med.DH_MEDICACAO
+                        AND     TP_ACAO           IN ('IH', 'UH')
+                        ) as dh_aprazado,
+                        (
+                        SELECT  TO_CHAR(Max(PW_DOCUMENTO_CLINICO.DH_FECHAMENTO),'DD/MM/RRRR HH24:MI:SS')
+                        FROM    PW_AVALIACAO_PRE_MED,
+                                PW_DOCUMENTO_CLINICO 
+                        WHERE   PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO IS NOT NULL
+                        AND     PW_AVALIACAO_PRE_MED.CD_DOCUMENTO_CLINICO = PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
+                        AND     PW_AVALIACAO_PRE_MED.CD_PRE_MED           = pre_med.cd_pre_med
+                        ) AS dh_avaliacao,
+                        (
+                            SELECT 	TO_CHAR(MAX(MVTO_ESTOQUE.HR_MVTO_ESTOQUE),'DD/MM/RRRR HH24:MI:SS')
+                            FROM 	HRITSOLSAI_PRO,
+                                    ITSOLSAI_PRO,
+                                    MVTO_ESTOQUE
+                            WHERE 	HRITSOLSAI_PRO.CD_ITPRE_MED     = HRITPRE_MED.CD_ITPRE_MED
+                            AND		HRITSOLSAI_PRO.DH_MEDICACAO     = HRITPRE_MED.DH_MEDICACAO
+                            AND		HRITSOLSAI_PRO.CD_ITSOLSAI_PRO  = ITSOLSAI_PRO.CD_ITSOLSAI_PRO
+                            AND		MVTO_ESTOQUE.CD_SOLSAI_PRO      = ITSOLSAI_PRO.CD_SOLSAI_PRO
+                        ) AS dh_mvto_estoque
+                FROM    atendime,
+                        pre_med,
+                        itpre_med,      
+                        hritpre_med,
+                        hritpre_cons, 
+                        tip_presc
+                WHERE   atendime.cd_atendimento         = pre_med.cd_atendimento
+                AND     pre_med.cd_pre_med              = itpre_med.cd_pre_med
+                AND     tip_presc.cd_tip_presc          = itpre_med.cd_tip_presc     
+                AND     itpre_med.cd_itpre_med          = hritpre_med.cd_itpre_med
+                AND     hritpre_cons.cd_itpre_med(+)    = hritpre_med.cd_itpre_med
+                AND     hritpre_cons.dh_medicacao(+)    = hritpre_med.dh_medicacao
+                AND     pre_med.cd_atendimento          = :cdAtendimento
+                AND     pre_med.dt_validade             >= SYSDATE
+                AND     (hritpre_cons.sn_suspenso  		IS NULL OR hritpre_cons.sn_suspenso = 'N')
+                AND		hritpre_cons.dh_checagem 		IS NULL
+                AND		round((hritpre_med.dh_medicacao - SYSDATE)*1440) < 0
+                AND 	tip_presc.cd_tip_esq			IN ('MDN', 'MDA', 'MDO', 'MDU', 'MED', 'DIC', 'TOS', 'NPD', 'ATB', 'IMT', 'PEP')
+                
+                UNION ALL
+                
+                SELECT  pre_med.cd_atendimento,
+                        CASE
+                            WHEN dh_checagem IS NULL THEN round((hritpre_med.dh_medicacao - SYSDATE)*1440)
+                        ELSE NULL
+                        END
+                        AS tempo_prox_minutos_med,
+                        NULL AS tempo_prox_minutos,
+                        (
+                        SELECT  TO_CHAR(Max(DH_MODIFICACAO),'DD/MM/RRRR HH24:MI:SS')
+                        FROM    LOG_HRITPRE_MED
+                        WHERE   CD_ITPRE_MED      = ITPRE_MED.CD_ITPRE_MED
+                        AND     DH_MEDICACAO_NOVA = hritpre_med.DH_MEDICACAO
+                        AND     TP_ACAO           IN ('IH', 'UH')
+                        ) as dh_aprazado,
+                        (
+                        SELECT  TO_CHAR(Max(PW_DOCUMENTO_CLINICO.DH_FECHAMENTO),'DD/MM/RRRR HH24:MI:SS')
+                        FROM    PW_AVALIACAO_PRE_MED,
+                                PW_DOCUMENTO_CLINICO 
+                        WHERE   PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO IS NOT NULL
+                        AND     PW_AVALIACAO_PRE_MED.CD_DOCUMENTO_CLINICO = PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
+                        AND     PW_AVALIACAO_PRE_MED.CD_PRE_MED           = pre_med.cd_pre_med
+                        ) AS dh_avaliacao,
+                        (
+                            SELECT 	TO_CHAR(MAX(MVTO_ESTOQUE.HR_MVTO_ESTOQUE),'DD/MM/RRRR HH24:MI:SS')
+                            FROM 	HRITSOLSAI_PRO,
+                                    ITSOLSAI_PRO,
+                                    MVTO_ESTOQUE
+                            WHERE 	HRITSOLSAI_PRO.CD_ITPRE_MED     = HRITPRE_MED.CD_ITPRE_MED
+                            AND		HRITSOLSAI_PRO.DH_MEDICACAO     = HRITPRE_MED.DH_MEDICACAO
+                            AND		HRITSOLSAI_PRO.CD_ITSOLSAI_PRO  = ITSOLSAI_PRO.CD_ITSOLSAI_PRO
+                            AND		MVTO_ESTOQUE.CD_SOLSAI_PRO      = ITSOLSAI_PRO.CD_SOLSAI_PRO
+                        ) AS dh_mvto_estoque
+                FROM    atendime,
+                        pre_med,
+                        itpre_med,      
+                        hritpre_med,
+                        hritpre_cons, 
+                        tip_presc
+                WHERE   atendime.cd_atendimento         = pre_med.cd_atendimento
+                AND     pre_med.cd_pre_med              = itpre_med.cd_pre_med
+                AND     tip_presc.cd_tip_presc          = itpre_med.cd_tip_presc     
+                AND     itpre_med.cd_itpre_med          = hritpre_med.cd_itpre_med
+                AND     hritpre_cons.cd_itpre_med(+)    = hritpre_med.cd_itpre_med
+                AND     hritpre_cons.dh_medicacao(+)    = hritpre_med.dh_medicacao
+                AND     pre_med.cd_atendimento          = :cdAtendimento
+                AND     pre_med.dt_validade             >= SYSDATE
+                AND     (hritpre_cons.sn_suspenso  		IS NULL OR hritpre_cons.sn_suspenso = 'N')
+                AND		hritpre_cons.dh_checagem 		IS NULL
+                AND		round((hritpre_med.dh_medicacao - SYSDATE)*1440) BETWEEN 0 AND 60
+                AND 	tip_presc.cd_tip_esq			IN ('MDN', 'MDA', 'MDO', 'MDU', 'MED', 'DIC', 'TOS', 'NPD', 'ATB', 'IMT', 'PEP')
+            )
+            GROUP BY cd_atendimento", [":cdAtendimento" => $cdAtendimento]);
         
         // return DB::connection('oracle')
         //             ->select("SELECT SUM(total_ate_1h) AS total_ate_1h, SUM(total_atrasado) AS total_atrasado

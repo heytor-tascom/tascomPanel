@@ -18,4 +18,14 @@ class Atendimento extends Model
     {
         return $this->belongsTo(Convenio::class, "cd_convenio", "cd_convenio");
     }
+
+    public function leito()
+    {
+        return $this->hasOne(Leito::class, "cd_leito", "cd_leito");
+    }
+
+    public function prestador()
+    {
+        return $this->hasOne(Prestador::class, "cd_prestador", "cd_prestador");
+    }
 }

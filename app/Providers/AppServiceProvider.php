@@ -31,7 +31,10 @@ class AppServiceProvider extends ServiceProvider
 
             if(Auth::user()) {
                 
-                $menu    = Modulo::where("ativo", 1)->orderBy('nr_ordem', 'ASC')->with('paginas')->get();
+                $menu    = Modulo::where("ativo", 1)->orderBy('nr_ordem', 'ASC')->with(['paginas' => function($query) {
+                                                                                            $query->orderBy("nr_ordem", "ASC");
+                                                                                        }])
+                                                                                        ->get();
                 $view->with('menu', $menu);
 
             }

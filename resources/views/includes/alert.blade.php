@@ -1,9 +1,9 @@
 @if ($errors->any())
-<div class="alert alert-danger bg-gradient-danger animated bounceInLeft" style="
+<div class="alert alert-danger bg-danger animated bounceInRight shadow-lg" style="
     width: 50%;
     position: fixed;
     bottom: 0;
-    left: 5px;
+    right: 5px;
     z-index: 1;
 ">
     <button type="button" class="close" data-dismiss="alert" aria-label="Clise">
@@ -27,12 +27,11 @@
 @endif
 
 @if (session('success'))
-    <div id="alert-msg" class="alert alert-success bg-gradient-success animated bounceIn" style="
+    <div id="alert-msg" class="alert alert-success bg-success animated bounceInRight shadow-lg" style="
     width: 15%;
     position: fixed;
-    bottom: 0;
-    left: 42.5%;
-    right: 42.5%;
+    bottom: 10px;
+    right: 10px;
     z-index: 1;
     ">
         <div class="row">
@@ -48,11 +47,11 @@
 @endif
 
 @if (session('error'))
-    <div class="alert alert-danger bg-gradient-danger animated bounceInLeft" style="
+    <div class="alert alert-danger bg-danger animated bounceInRight shadow-lg" style="
     width: 50%;
     position: fixed;
-    bottom: 0;
-    left: 5px;
+    bottom: 10px;
+    right: 10px;
     z-index: 1;
     ">
         <button type="button" class="close" data-dismiss="alert" aria-label="Clise">
@@ -65,7 +64,7 @@
 <script>
     setTimeout(
         function () {
-            $('#alert-msg').show().addClass('animated bounceOutDown');
+            $('#alert-msg').show().addClass('animated bounceOutRight');
         }, 2500
     );
 </script>

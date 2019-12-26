@@ -10,12 +10,13 @@
 
     <title>{{ config('app.name', 'Argon Dashboard') }}</title>
     <!-- Favicon -->
-    <link href="{{ asset('argon') }}/img/brand/favicon.png" rel="icon" type="image/png">
+    <link href="{{ asset('favicon.png') }}" rel="icon" type="image/png">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
     <!-- Icons -->
     <link href="{{ asset('argon') }}/vendor/nucleo/css/nucleo.css" rel="stylesheet">
     <link href="{{ asset('argon') }}/vendor/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="{{ asset('rhp') }}/plugins/webfont-medical-icons/css/wfmi-style.css" rel="stylesheet">
     <!-- AnimateCSS -->
     <link href="{{ asset('rhp') }}/plugins/animatecss/animate.css" rel="stylesheet">
     <!-- Argon CSS -->

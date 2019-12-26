@@ -8,7 +8,8 @@ class SolicitacaoAvulsaHelpers
         switch($solicAvulsa)
         {
             case "AVU":
-            return '<i class="fas fa-tablets" style="color:#34495e;"></i>';
+            // return '<i class="fas fa-tablets" style="color:#34495e;"></i>';
+            return '<i class="fas fa-tablets text-info"></i>';
             break;
 
             default:

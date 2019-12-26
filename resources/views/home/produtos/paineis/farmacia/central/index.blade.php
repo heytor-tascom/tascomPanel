@@ -6,7 +6,7 @@
         <div class="card mt-5 pt-4">
             <div class="card-body px-0 pt-4">
                 <div class="w-100 mt-5"></div>
-                <table class="table table-sm">
+                <table class="table table-sm" id="tableSolicitacoes">
                     <thead>
                             
                             @if ($aba == 'avulsas' || $aba == 'devolucoes')
@@ -54,7 +54,12 @@
                             @endif  
                         
                             <tr class="{{ $classLinha }}">
-                                <td class="text-center" style="font-size:1.8em;"><i class="fas fa-exclamation-triangle"></i></td>
+                                <td class="text-center" style="font-size:1.8em;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    @if (isset($toda->dt_alta_medica) && !is_null($toda->dt_alta_medica))
+                                    &nbsp;<i class="fas fa-user-check" style="color:#00e089;"></i>
+                                    @endif
+                                </td>
                                 <td class="text-center">{{$toda->cd_solsai_pro}}</td>
                                 <td>{{ $toda->ds_leito }}</td>
                                 <td class="text-center">{{ $toda->cd_atendimento }}</td>
@@ -75,7 +80,7 @@
                                     <td>{{ $toda->ds_turno }}</td>
                                 @endif
                                 
-                                <td class="text-center"><img src="{{asset('tascom')}}/qrcode/gerar/php/qr_img.php?d='{{ $toda->cd_solsai_pro }}" style="width:75px;"></td>
+                                <td class="text-center"><img src="{{asset('tascom')}}/qrcode/gerar/php/qr_img.php?d={{ $toda->cd_solsai_pro }}" style="width:75px;"></td>
                             </tr>
                         @empty    
 
@@ -168,6 +173,28 @@
         
         } else {
             // $("#lista-pacientes tbody").empty();
+        }
+    }
+
+    function searchPatient() {
+        var input, filter, table, tr, td, i, txtValue;
+        input   = document.getElementById("searchInput");
+        filter  = input.value.toUpperCase();
+        table   = document.getElementById("tableSolicitacoes");
+        tr      = table.getElementsByTagName("tr");
+        
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[4];
+            
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }       
         }
     }
 

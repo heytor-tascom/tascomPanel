@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="{{ asset('rhp') }}/favicon.ico">
+    
     <title>RHP</title>
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300&display=swap" rel="stylesheet">
@@ -11,6 +13,8 @@
 
     <!-- FontAwesome -->
     <link href="{{ asset('rhp') }}/plugins/fontawesome/css/all.min.css" rel="stylesheet">
+    <!-- MedicalFont -->
+    <link href="{{ asset('rhp') }}/plugins/webfont-medical-icons/css/wfmi-style.css" rel="stylesheet">
     <!-- AnimateCSS -->
     <link href="{{ asset('rhp') }}/plugins/animatecss/animate.css" rel="stylesheet">
     <!-- Material Icons -->

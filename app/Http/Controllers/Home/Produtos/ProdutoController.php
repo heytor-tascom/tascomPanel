@@ -13,7 +13,9 @@ class ProdutoController extends Controller
     {
         $ambientes = Ambiente::where('ativo', 1)
                              ->with(['produtos' => function($query) {
-                                 $query->with('tipoProduto');
+                                 $query->where("ativo", 1)
+                                        ->with('tipoProduto')
+                                        ->orderBy('nr_ordem');
                              }])
                              ->get();
                              

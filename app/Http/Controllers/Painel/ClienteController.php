@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Painel;
 use Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Cliente;
+use App\Models\Licenca;
+use App\Models\Plano;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\StoreClientePost;
@@ -17,24 +19,35 @@ class ClienteController extends Controller
     {
         $params = $request->only('s');
 
-        if (isset($params['s']))
+        if (isset($params['s'])) {
             $clientes = Cliente::search($params['s']);
-        $clientes = Cliente::paginate($this->totalPage);
+        } else {
+            $clientes = Cliente::paginate($this->totalPage);
+        }
         
         return view('painel.config.cliente.index', compact('clientes'));
     }
 
     public function create()
     {
-        return view('painel.config.cliente.form');   
+        $planos = Plano::where("ativo", 1)
+                        ->with(["produtos" => function($query) {
+                            $query->with(["produto" => function($query) {
+                                $query->with("tipoProduto");
+                            }]);
+                        }])
+                        ->get();
+
+        return view('painel.config.cliente.form', compact('planos'));   
     }
 
     public function store(StoreClientePost $request, Cliente $cliente)
     {
-        $clienteData = $request->except('_token');
+        $clienteData = $request->except('_token', 'p_search', 'plano_id');
         $clienteData["created_by"] = Auth::user()->id;
         $clienteData["updated_by"] = Auth::user()->id;
 
+        /*
         $response = $cliente->store($clienteData);
 
         if ($response) {
@@ -46,13 +59,14 @@ class ClienteController extends Controller
                 ->back()
                 ->with('error', $response['message']);
         }
+        */
     }
 
     public function view($clienteId, Request $request, Cliente $cliente)
     {
         $formData = $cliente->where("id", $clienteId)->with('licencas')->first();
 
-        if ($formData->id)
+        if (isset($formData->id))
             return view('painel.config.cliente.form', compact('formData'));
         return redirect()
             ->back()

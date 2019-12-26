@@ -20,6 +20,7 @@ class Setor extends Model
                     ->whereIn("setor.tp_setor", $tiposSetores)
                     ->orderBy("setor.nm_setor")
                     ->select("setor.cd_setor", "setor.nm_setor")
+                    ->orderBy("setor.nm_setor")
                     ->get();
     }
 }

@@ -12,7 +12,7 @@
                 <ul class="list-unstyled mb-0 float-right">
                     <li class="list-inline-item">
                         <div class="form-group mb-0">
-                            <input type="search" name="s" class="form-control form-control-sm" placeholder="Pesquise aqui..." />
+                            <input type="search" name="s" class="form-control form-control-sm" placeholder="Pesquise aqui..." value="{{ app('request')->input('s') }}" autocomplete="off" />
                         </div>
                     </li>
                 </ul>
@@ -32,7 +32,7 @@
                 </thead>
                 <tbody>
                     @forelse($clientes as $key => $cliente)
-                        <tr onclick="javascript:window.location = '{{ route("painel.config.cliente.view", ["id" => $cliente->id]) }}'">
+                        <tr class="pointer" onclick="javascript:window.location = '{{ route("painel.config.cliente.view", ["id" => $cliente->id]) }}'">
                             <td>{{ $cliente->id }}</td>
                             <td>{{ $cliente->nm_cliente }}</td>
                             <td>{{ $cliente->nr_cpf_cnpj }}</td>

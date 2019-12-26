@@ -14,7 +14,7 @@ class CreatePlanoProdutoTable extends Migration
             $table->foreign('plano_id')->references('id')->on('plano');
             $table->bigInteger('produto_id')->unsigned();
             $table->foreign('produto_id')->references('id')->on('produto');
-//            $table->timestamps();
+            $table->timestamps();
             $table->bigInteger('created_by')->unsigned();
             $table->foreign('created_by')->references('id')->on('users');
             $table->bigInteger('updated_by')->unsigned();

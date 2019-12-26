@@ -13,4 +13,9 @@ class UnidInt extends Model
     {
         return $this->belongsTo(Setor::class, "cd_setor", "cd_setor");
     }
+
+    public function atendimentos()
+    {
+        return $this->belongsTo(Atendimento::class, "cd_unid_int", "cd_unid_int");
+    }
 }

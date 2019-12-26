@@ -14,6 +14,7 @@ class CreateLicencaTable extends Migration
             $table->foreign('plano_id')->references('id')->on('plano');
             $table->bigInteger('cliente_id')->unsigned();
             $table->foreign('cliente_id')->references('id')->on('cliente');
+            $table->date('dt_validade');
             $table->boolean('ativo')->default(true); 
             $table->timestamps();
             $table->bigInteger('created_by')->unsigned();

@@ -2,11 +2,12 @@
 
 @section('content')
 @include('layouts.rhp.navbars.navbar')
+@inject('helpers', 'App\Http\Helpers\Helpers')
 <div class="container-fluid">
     <div class="card mt-5 pt-4">
         <div class="card-body px-0 pt-4">
             <div class="w-100 mt-5"></div>
-            <table class="table table-sm table-hover">
+            <table class="table table-sm table-hover" id="tablePacientes">
                 <thead>
                     <tr>
                         <th class="text-center">STATUS</th>
@@ -26,8 +27,15 @@
                 </thead>
                 <tbody>
                     @forelse ($atendimentos as $atendimento)
+                    @php
+                    $idade = $helpers::getIdade(date("d/m/Y", strtotime($atendimento->paciente->dt_nascimento)));
+                    @endphp
                     @if (isset($atendimento->status->total_atrasado) && $atendimento->status->total_atrasado > 0)
+                    @if (isset($atendimento->status->total_atrasado_med) && $atendimento->status->total_atrasado_med > 0)
                     <tr class="checagemAtrasada">
+                    @else
+                    <tr>
+                    @endif
                         <td class="text-center">
                             <i class="material-icons checagemAtrasada">alarm</i>
                             @if(isset($atendimento->status->dh_mvto_estoque) && !is_null($atendimento->status->dh_mvto_estoque))
@@ -39,7 +47,11 @@
                             @endif
                         </td>
                     @elseif (isset($atendimento->status->total_ate_1h) && $atendimento->status->total_ate_1h >= 0)
+                    @if (isset($atendimento->status->total_ate_1h_med) && $atendimento->status->total_ate_1h_med >= 0)
                     <tr class="checagemProxima">
+                    @else
+                    <tr>
+                    @endif
                         <td class="text-center">
                             <i class="material-icons checagemProxima">info</i>
                             @if(isset($atendimento->status->dh_mvto_estoque) && !is_null($atendimento->status->dh_mvto_estoque))
@@ -52,7 +64,7 @@
                         </td>
                     @else
                     <tr class="">
-                        <td class="text-center"></td>
+                        <td class="text-center"><i class="material-icons mt--1 text-success">check_circle_outline</i></td>
                     @endif
                         <td>{{ $atendimento->nm_setor }}</td>
                         <td>{{ $atendimento->ds_leito }}</td>
@@ -61,7 +73,11 @@
                         <td>{{ $atendimento->paciente->nm_paciente }}</td>
                         <td class="text-center">{{ date("d/m/Y", strtotime($atendimento->paciente->dt_nascimento)) }}</td>
                         <td class="text-center">{{ date("d/m/Y", strtotime($atendimento->dt_atendimento)) }}</td>
-                        <td class="text-center"></td>
+                        @if ($idade > 0)
+                        <td class="text-center">{{ $idade }} ANOS</td>
+                        @else
+                        <td class="text-center">{{ $idade }} ANO</td>
+                        @endif
                         <td>{{ !empty($atendimento->paciente->nm_social) ? $atendimento->paciente->nm_social : '-' }}</td>
                         @if ($tipoVisualizacao == 'd8375b48751caf44e5c23d4b0dcc2984d6081784')
                         <td class="text-center"><a href="javascript:void(0)" data-toggle="modal" data-target="#modalDetalhes" onclick="viewDetails({cdAtendimento: '{{ $atendimento->cd_atendimento }}', nmPaciente: '{{ $atendimento->paciente->nm_paciente }}', dtNascimento: '{{ $atendimento->paciente->dt_nascimento }}'})"><i class="fas fa-external-link-alt fa-lg text-black"></i></a></td>
@@ -94,15 +110,10 @@
 @push('scripts')
 <script>
     $(function() {
-        $(".selectpicker").selectpicker({
-            noneSelectedText: "Selecione um setor",
-            noneResultsText: "Nenhum setor encontrado",
-            countSelectedText: "{0} Setores selecionados",
-        });
-
         setInterval(function(){
+            console.log('refresh!');
             location.reload();
-        }, 60 * 1000);
+        }, {{ $refreshTime }});
     });
 
     function viewDetails(a) {
@@ -143,6 +154,28 @@
             // $("#lista-pacientes tbody").empty();
             params += (tipoVisualizacao) ? "?tipoVisualizacao="+tipoVisualizacao : '';
             window.history.replaceState("", "Painel Checagem", params);
+        }
+    }
+
+    function searchPatient() {
+        var input, filter, table, tr, td, i, txtValue;
+        input   = document.getElementById("searchInput");
+        filter  = input.value.toUpperCase();
+        table   = document.getElementById("tablePacientes");
+        tr      = table.getElementsByTagName("tr");
+        
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[5];
+            
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }       
         }
     }
 

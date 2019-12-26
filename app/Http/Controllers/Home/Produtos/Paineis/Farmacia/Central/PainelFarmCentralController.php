@@ -40,6 +40,7 @@ class PainelFarmCentralController extends Controller
                                     ->join('setor', 'setor.cd_setor', '=', 'config_estoque.cd_setor')
                                     ->whereIn('setor.cd_setor', $filterSetores)
                                     ->selectRaw('DISTINCT estoque.cd_estoque as cd_estoque, ds_estoque')
+                                    ->orderBy('estoque.ds_estoque')
                                     ->get();
         }
 
@@ -113,6 +114,7 @@ class PainelFarmCentralController extends Controller
                         solsai_pro.sn_urgente, 
                         solsai_pro.tp_origem_solicitacao,
                         to_char(paciente.dt_nascimento,'dd/mm/rrrr') DT_NASCIMENTO,
+                        to_char(atendime.dt_alta_medica,'dd/mm/rrrr hh24:mi:ss') dt_alta_medica,
                         SOLSAI_PRO.DT_SOLSAI_PRO,
                         SOLSAI_PRO.HR_SOLSAI_PRO,
                         'N' SN_PSCOTROPICO
@@ -154,8 +156,6 @@ class PainelFarmCentralController extends Controller
                 
     }
 
-
-
     public static function avulsas($parSetores, $parEstoque)
     {
         $setores = "'".implode("','",array_filter($parSetores))."'";
@@ -174,6 +174,7 @@ class PainelFarmCentralController extends Controller
                         solsai_pro.sn_urgente, 
                         solsai_pro.tp_origem_solicitacao,
                         to_char(paciente.dt_nascimento,'dd/mm/rrrr') DT_NASCIMENTO,
+                        to_char(atendime.dt_alta_medica,'dd/mm/rrrr hh24:mi:ss') dt_alta_medica,
                         SOLSAI_PRO.DT_SOLSAI_PRO,
                         SOLSAI_PRO.HR_SOLSAI_PRO,
                         'N' SN_PSCOTROPICO
@@ -228,6 +229,7 @@ class PainelFarmCentralController extends Controller
                         SOLSAI_PRO.SN_URGENTE,
                         solsai_pro.tp_origem_solicitacao,
                         '' DT_NASCIMENTO,                          
+                        '' dt_alta_medica,
                         'N' SN_PSCOTROPICO                        
                         FROM   SOLSAI_PRO
                                                 
@@ -267,6 +269,7 @@ class PainelFarmCentralController extends Controller
                         SOLSAI_PRO.SN_URGENTE,
                         solsai_pro.tp_origem_solicitacao,
                         '' DT_NASCIMENTO,
+                        '' dt_alta_medica,
                         'N' SN_PSCOTROPICO
                                                 
                         FROM   SOLSAI_PRO
@@ -306,6 +309,7 @@ class PainelFarmCentralController extends Controller
                         solsai_pro.sn_urgente, 
                         solsai_pro.tp_origem_solicitacao,
                         to_char(paciente.dt_nascimento,'dd/mm/rrrr') DT_NASCIMENTO,
+                        to_char(atendime.dt_alta_medica,'dd/mm/rrrr hh24:mi:ss') dt_alta_medica,
                         SOLSAI_PRO.DT_SOLSAI_PRO,
                         SOLSAI_PRO.HR_SOLSAI_PRO,
                         'N' SN_PSCOTROPICO
@@ -358,6 +362,7 @@ class PainelFarmCentralController extends Controller
                             LEITO.DS_LEITO,
                             SOLSAI_PRO.TP_SITUACAO, 
                             TO_CHAR(SOLSAI_PRO.CD_ATENDIMENTO) CD_ATENDIMENTO, 
+                            to_char(atendime.dt_alta_medica,'dd/mm/rrrr hh24:mi:ss') dt_alta_medica,
                             PACIENTE.NM_PACIENTE, 
                             TURNO_SETOR.DS_TURNO,  
                             SOLSAI_PRO.SN_URGENTE, 
@@ -397,6 +402,7 @@ class PainelFarmCentralController extends Controller
                                 '' DS_LEITO,
                                 SOLSAI_PRO.TP_SITUACAO,    
                                 '' CD_ATENDIMENTO,
+                                '' dt_alta_medica,
                                 '' NM_PACIENTE,
                                 '' DS_TURNO,
                                 SOLSAI_PRO.SN_URGENTE,
@@ -440,6 +446,7 @@ class PainelFarmCentralController extends Controller
                             SOLSAI_PRO.SN_URGENTE, 
                             solsai_pro.tp_origem_solicitacao,
                             TO_CHAR(PACIENTE.DT_NASCIMENTO,'DD/MM/RRRR') DT_NASCIMENTO,
+                            to_char(atendime.dt_alta_medica,'dd/mm/rrrr hh24:mi:ss') dt_alta_medica,
                             SOLSAI_PRO.DT_SOLSAI_PRO,
                             SOLSAI_PRO.HR_SOLSAI_PRO,
                             'S' SN_PSCOTROPICO
@@ -490,7 +497,8 @@ class PainelFarmCentralController extends Controller
                                 '' DS_TURNO,
                                 SOLSAI_PRO.SN_URGENTE,
                                 solsai_pro.tp_origem_solicitacao,
-                                '' DT_NASCIMENTO,                          
+                                '' DT_NASCIMENTO,
+                                '' dt_alta_medica,                        
                                 SOLSAI_PRO.DT_SOLSAI_PRO,
                                 SOLSAI_PRO.HR_SOLSAI_PRO,
                                 'S' SN_PSCOTROPICO 
