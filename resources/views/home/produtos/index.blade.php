@@ -3,10 +3,10 @@
 @section('content')
     @include('layouts.navbars.navs.tascom')
     <main role="main">
-    @include('layouts.headers.padrao')    
+    @include('layouts.headers.padrao')
 
         <div class="container">
-           
+
              @forelse ($ambientes as $ambiente)
              <div class="my-3 p-3 bg-white rounded shadow-sm animated fadeInUp">
                 <h5 class="border-bottom border-gray pb-2 mb-0">{{ $ambiente->ds_ambiente }}</h5>
@@ -17,7 +17,7 @@
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <strong class="text-gray-dark" id="id{{ $produto->id }}">{{ $produto->nm_produto }}</strong>
                                 <div class="float-right">
-                                    @if($produto->id == 8)
+                                    @if($produto->id == 8 || $produto->id == 19 || $produto->id == 20 || $produto->id == 21)
                                     <a class="btn btn-secondary btn-sm" href="{{ $produto->ds_produto }}" target="_blank">Abrir</a>
                                     @else
                                     <a class="btn btn-secondary btn-sm" href="{{ route($produto->nm_rota) }}" target="_blank">Abrir</a>
@@ -25,11 +25,11 @@
                                     <button class="btn btn-secondary btn-sm" onclick="editarProduto({ 'id': {{ $produto->id }}, 'nm_produto': '{{ $produto->nm_produto }}', 'tempo_atualizacao': '{{ $produto->tempo_atualizacao }}' })" data-toggle="modal" id="{{ $produto->id }}" data-target="#exampleModal">Editar</button>
                                 </div>
                             </div>
-                            
-                            <span class="d-block">Parametros: {{ $produto->ds_parametros }}</span>                            
+
+                            <span class="d-block">Parametros: {{ $produto->ds_parametros }}</span>
                         </div>
-                    </div>    
-                        
+                    </div>
+
                 @empty
                     <p class="text-center mt-3 text-muted">
                         <i class="fas fa-box-open"></i>
@@ -37,15 +37,15 @@
                         Sem produtos aqui no momento
                     </p>
                 @endforelse
-                
+
              </div>
 
              @empty
-                 
+
              @endforelse
 
-      
-        </div>  
+
+        </div>
 
     </main>
 @endsection
@@ -61,7 +61,7 @@
             </button>
             </div>
             <div class="modal-body">
-                
+
                 <form action="{{ route('editar_produtos') }}" method="post">
                     @csrf
                         <input type="text" id="produto_id" hidden name="id">
@@ -76,8 +76,8 @@
                                 Tempo de Atualização <span class="text-muted">(Milissegundos)</span>:<br/>
                                 <input type="number" class="form-control" name="tempo_atualizacao" id="tempo_atualizacao">
                             </div>
-                        </div>                            
-            
+                        </div>
+
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -98,4 +98,4 @@
         $('#tempo_atualizacao').val(e.tempo_atualizacao);
 
     }
-</script>            
+</script>

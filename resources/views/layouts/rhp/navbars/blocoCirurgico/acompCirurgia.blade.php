@@ -4,14 +4,14 @@
             <img src="{{ asset('rhp') }}/img/icones/logo_rhp.png" alt="">
         </div>
     </div>
-    <div class="col-md-5 border-right">
+    <div class="col-md-5 ">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="text-painel align-middle text-center mx-2 mt-5" style="line-height: 1.5em">
                     {{ $title ?? '' }}
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <div class="d-flex align-items-center flex-wrap mt-3" style="height: 100%;">  
                     <div class="flex-fill mr-3">
                         @if(isset($blocos))
@@ -47,18 +47,44 @@
     </div>
     
     <div class="col-md-6 py-2 text-center">
-      
+   
+            <div class="row">
+                <div class="col-md-12">
+    
+                     
+                      <button type="button" class="btn btn-secondary " >
+                        <i class="fas fa-circle" style="color:green;"></i> CIRURGIA NO HORÁRIO
+                      </button>
+                      <button type="button" class="btn btn-secondary " >
+                        <i class="fas fa-circle" style="color:#D50000;"></i> CIRURGIA ATRASADA
+                      </button>
+                      <button type="button" class="btn btn-secondary " >
+                        <i class="fas fa-arrow-left" style="color:#4C6EF5;"></i> CIRURGIA ADIANTADA
+                      </button>
+                      <button type="button" class="btn btn-secondary " >
+                        <i class="fas fa-arrow-right" style="color:#4C6EF5;"></i> PROCESSO ATUAL
+                      </button>
+                      <button type="button" class="btn btn-secondary " >
+                        <i class="far fa-times-circle" style="color:#D50000;"></i> CIRURGIA CANCELADA
+                      </button>
+                  </div>
     </div>
+</div>
 </div>
 
 @push('scripts')
 <script>
-    $(".selectpicker").selectpicker({
+    
+$(".selectpicker").selectpicker({
         noneSelectedText: "Selecione um Bloco Cirúrgico",
         noneResultsText: "Nenhum Bloco Cirúrgico encontrado",
         countSelectedText: "{0} Bloco Cirúrgicos selecionados",
         deselectAllText: "Desmarcar Todos",
         selectAllText: "Marcar Todos",
-    })
+    });
+
+
+
+
 </script>
 @endpush

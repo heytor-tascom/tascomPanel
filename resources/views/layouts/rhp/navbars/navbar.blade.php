@@ -43,12 +43,13 @@
         <div class="col-md-7 py-2 legendas">
             <div class="d-flex flex-column pt-4" style="height: 100%;">
                 <ul class="list-unstyled w-100">
-                    <li class="list-inline-item w-25 mb-3"><i class="material-icons checagemProxima float-left mt--1">info</i>&nbsp; CHECAGEM NA PRÓXIMA HORA</li>
-                    <li class="list-inline-item w-25 mb-3"><i class="material-icons text-blue float-left mt--1" style="color: #e67e22">access_time</i>&nbsp; APRAZAMENTO</li>
-                    <li class="list-inline-item w-25 mb-3"><i class="material-icons text-blue float-left mt--1" style="color: #4285f4;">move_to_inbox</i>&nbsp; DISPENSAÇÃO</li>
-                    <li class="list-inline-item w-25 mb-3"><i class="material-icons checagemAtrasada float-left mt--1">alarm</i>&nbsp; CHECAGEM ATRASADA</li>
-                    <li class="list-inline-item w-25 mb-3"><i class="material-icons text-blue float-left mt--1" style="color: #665aff;">local_pharmacy</i>&nbsp; AVALIAÇÃO FARMACÊUTICA</li>
-                    <li class="list-inline-item w-25 mb-3"><i class="material-icons text-blue float-left mt--1 text-success">check_circle_outline</i>&nbsp; CHECAGEM</li>
+                    <li class="list-inline-item mb-3"  style="width: 22%;"><i class="material-icons checagemProxima float-left mt--1">info</i>&nbsp; CHECAGEM NA PRÓXIMA HORA</li>
+                    <li class="list-inline-item mb-3"  style="width: 22%;"><i class="material-icons text-blue float-left mt--1" style="color: #e67e22">access_time</i>&nbsp; APRAZAMENTO</li>
+                    <li class="list-inline-item mb-3"  style="width: 22%;"><i class="material-icons text-blue float-left mt--1" style="color: #4285f4;">move_to_inbox</i>&nbsp; DISPENSAÇÃO</li>
+                    <li class="list-inline-item mb-3"  style="width: 22%;"><i class="material-icons checagemAtrasada float-left mt--1">alarm</i>&nbsp; CHECAGEM ATRASADA</li>
+                    <li class="list-inline-item mb-3"  style="width: 22%;"><i class="material-icons text-blue float-left mt--1" style="color: #665aff;">local_pharmacy</i>&nbsp; AVALIAÇÃO FARMACÊUTICA</li>
+                    <li class="list-inline-item mb-3"  style="width: 22%;"><i class="material-icons text-blue float-left mt--1 text-success">check_circle_outline</i>&nbsp; CHECAGEM</li>
+                    <li class="list-inline-item mb-3" style="width: 22%;"><i class="material-icons text-blue float-left mt--1" style="color: green;">beenhere</i>&nbsp; RECEBIMENTO</li>
                 </ul>
             </div>
         </div>

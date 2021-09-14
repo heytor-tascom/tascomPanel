@@ -131,6 +131,11 @@
                 @endforelse
             </tbody>
         </table>
+    @else
+    <div class="text-center">
+        <i class="fas fa-file-medical fa-lg"></i>
+        <p>Nenhuma prescrição válida</p>
+    </div>
     @endif
 @empty
     <div class="text-center">

@@ -100,6 +100,28 @@ class ProdutoTableSeeder extends Seeder
                 'usuario_id'        => 1,
                 'tempo_atualizacao' => 60000,
             ],
+            [
+                'nm_produto'        => 'PAINEL DE GESTÃO À VISTA',
+                'ds_produto'        => 'Painel de resumo dos status do paciente',
+                'tipo_produto_id'   => 1,
+                'ambiente_id'       => 3,
+                'nm_rota'           => 'painel.enfermagem.gesta.vista.setores',
+                'ds_parametros'     => 'Setor',
+                'nr_ordem'          => 1,
+                'usuario_id'        => 1,
+                'tempo_atualizacao' => 60000,
+            ],
+            [
+                'nm_produto'        => 'PAINEL DE GESTÃO À VISTA - UTI',
+                'ds_produto'        => 'Painel de resumo dos status do paciente',
+                'tipo_produto_id'   => 1,
+                'ambiente_id'       => 3,
+                'nm_rota'           => 'painel.enfermagem.gesta.vista.uti.setores',
+                'ds_parametros'     => 'Setor',
+                'nr_ordem'          => 1,
+                'usuario_id'        => 1,
+                'tempo_atualizacao' => 60000,
+            ],
         ];
 
         foreach ($produtos as $produto) {

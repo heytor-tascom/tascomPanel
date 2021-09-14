@@ -13,7 +13,7 @@
 
 // Route::get('/', function () {
 //     return view('home.produtos.index');
-// });	
+// });
 
 Route::get('/', 'Home\Produtos\ProdutoController@index');
 
@@ -37,26 +37,74 @@ Route::group(['namespace' => 'Home\Produtos', 'prefix' => 'produtos'], function 
 
 // Rotas não autenticadas dos painéis da enfermagem
 Route::group(['namespace' => 'Home\Produtos\Paineis\Enfermagem', 'prefix' => 'produtos/painel/enfermagem'], function () {
-    Route::get('/checagem', 'PainelEnfChecagemController@index')->name('painel.enfermagem.checagem');
-    Route::get('/checagem/?tipoVisualizacao=d8375b48751caf44e5c23d4b0dcc2984d6081784', 'PainelEnfChecagemController@index')->name('painel.enfermagem.checagem.gestor');
+	Route::get('/checagem', 'PainelEnfChecagemController@index')->name('painel.enfermagem.checagem');
+	Route::get('/devChecagem', 'dev\ChecagemController@index')->name('painel.enfermagem.checagem.dev');
+	Route::get('/devChecagem/{atendimentoId}/detalhes', 'dev\ChecagemController@details')->name('painel.enfermagem.checagem.dev.detalhes');
+	Route::get('/checagem/?tipoVisualizacao=d8375b48751caf44e5c23d4b0dcc2984d6081784', 'PainelEnfChecagemController@index')->name('painel.enfermagem.checagem.gestor');
     Route::get('/checagem/{atendimentoId}/detalhes', 'PainelEnfChecagemController@details')->name('painel.enfermagem.checagem.detalhes');
 	Route::get('/assistencial', 'PainelEnfChecagemController@index')->name('painel.enfermagem.assistencial');
-	Route::get('/gestao-a-vista', ['uses' => 'PainelEnfGestaoVista@index'])->name('painel.enfermagem.gesta.vista.setores');
-	Route::get('/gestao-a-vista/{setorId?}', ['uses' => 'PainelEnfGestaoVista@index'])->name('painel.enfermagem.gesta.vista');
+	Route::get('/gestao-a-vista', 'PainelEnfGestaoVista@index')->name('painel.enfermagem.gesta.vista');
+	// Route::get('/gestao-a-vista-uti', ['uses' => 'PainelEnfGestaoVistaUti@index'])->name('painel.enfermagem.gesta.vista.uti.setores');
+	Route::get('/gestao-a-vista-uti', 'PainelEnfGestaoVistaUti@index')->name('painel.enfermagem.gesta.vista.uti');
 });
 
-// Rotas não autenticadas dos painéis da farmacia 
+// Rotas não autenticadas dos painéis da farmacia
 Route::group(['namespace' => 'Home\Produtos\Paineis\Farmacia', 'prefix' => 'produtos/painel/farmacia'], function () {
 	Route::get('/central', 'central\PainelFarmCentralController@index')->name('painel.farmacia.central');
+	Route::get('/realtime', 'central\PainelFarmCentralRealTimeController@index')->name('painel.farmacia.central.realtime');
+    Route::get('/centralv2', 'central\PainelFarmCentralV2Controller@index')->name('painel.farmacia.central.v2');
 	Route::get('/uti', 'uti\PainelFarmUtiController@index')->name('painel.farmacia.uti');
 	Route::get('/oncologia', 'oncologia\PainelFarmOncoController@index')->name('painel.farmacia.oncologia');
 	Route::get('/oncologia?tipoVisualizacao=d8375b48751caf44e5c23d4b0dcc2984d6081784', 'oncologia\PainelFarmOncoController@index')->name('painel.farmacia.oncologia.gestor');
 	Route::get('/oncologia/{atendimentoId}/{preMedId}/{solSaiProId}/detalhes', 'oncologia\PainelFarmOncoController@details')->name('painel.farmacia.oncologia.detalhes');
+
+    // paineis da oncologia, v2, foi deixado como SML porque ainda está em validação.
+    Route::get('/oncologia-sml', 'oncologia\PainelFarmOncoSMLController@index')->name('painel.farmacia.oncologia.sml');
+	Route::get('/oncologia-sml?tipoVisualizacao=d8375b48751caf44e5c23d4b0dcc2984d6081784', 'oncologia\PainelFarmOncoSMLController@index')->name('painel.farmacia.oncologia.gestor.sml');
+	Route::get('/oncologia-sml/{atendimentoId}/{preMedId}/{solSaiProId}/detalhes', 'oncologia\PainelFarmOncoSMLController@details')->name('painel.farmacia.oncologia.detalhes.sml');
+
 });
 
 // Rotas não autenticadas dos painéis do Bloco cirurgico
 Route::group(['namespace' => 'Home\Produtos\Paineis\BlocoCirurgico', 'prefix' => 'produtos/painel/blocoCirurgico'], function () {
 	Route::get('/acompCirurgia', 'PainelAcompCirurgiaController@index')->name('painel.blocoCirurgico.acompCirurgia');
+	Route::get('/acompCirurgiaObst', 'PainelAcompObstController@index')->name('painel.blocoCirurgico.acompCirurgiaObst');
+});
+
+// Rotas não autenticadas dos painéis da Urgência
+Route::group(['namespace' => 'Home\Produtos\Paineis\Urgencia', 'prefix' => 'produtos/painel/urgencia'], function () {
+	Route::get('/reavaliacao', 'PainelReavaliacaoController@index')->name('painel.urgencia.reavaliacao.setores');
+	Route::get('/reavaliacao/{setorId?}', 'PainelReavaliacaoController@index')->name('painel.urgencia.reavaliacao');
+});
+
+// Rotas não autenticadas dos paineís do almoxarifado
+Route::group(['namespace' => 'Home\Produtos\Paineis\Almoxarifado', 'prefix' => 'produtos/painel/almoxarifado'], function () {
+	Route::get('/devolucoes', 'PainelDevolucaoController@index')->name('painel.almoxarifado.devolucoes');
+});
+
+// Rotas não autenticadas da integracao
+Route::group(['namespace' => 'Integracao', 'prefix' => 'integracao/gerenciamento'], function () {
+    // cadastro
+	Route::get('/', 'GerenciamentoController@index')->name('integracao');
+    Route::get('/getReturnDRG', 'GerenciamentoController@getReturnDRG')->name('getReturnDRG');
+    Route::get('/searchCadastro', 'GerenciamentoController@searchCadastro')->name('searchCadastro');
+
+    // custo
+    Route::get('/getReturnDRGCusto', 'GerenciamentoController@getReturnDRGCusto')->name('getReturnDRGCusto');
+    Route::get('/searchCusto', 'GerenciamentoController@searchCusto')->name('searchCadastroCusto');
+    Route::post('/geraCusto', 'GerenciamentoController@geraCusto')->name('geraCusto');
+    Route::get('/custo', 'GerenciamentoController@indexCusto')->name('custo');
+
+    // admissão
+    Route::get('/admissao', 'GerenciamentoController@admissao')->name('admissao');
+    Route::get('/getReturnDRGAdmissao', 'GerenciamentoController@getReturnDRGAdmissao')->name('getReturnDRGAdmissao');
+    Route::get('/searchCadastroAdmissao', 'GerenciamentoController@searchCadastroAdmissao')->name('searchCadastroAdmissao');
+
+    // deparas
+
+    Route::get('/depara', 'GerenciamentoController@depara')->name('depara');
+    Route::post('/storeDepara', 'GerenciamentoController@storeDepara')->name('storeDepara');
+
 });
 
 /************************************************************

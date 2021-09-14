@@ -109,3 +109,35 @@ table tbody {
     animation-name: danger-animation;
     animation-duration: 1s;
 }
+
+.bg-red-pastel {
+    background: rgba(255, 178, 174, 0.25);
+}
+
+.bg-blue-pastel {
+    background: rgba(186, 209, 242, 0.25);
+}
+
+.bg-teal-pastel {
+    background: rgba(140, 222, 215, 0.25);
+}
+
+.bg-pink-pastel {
+    background: rgba(237, 175, 184, 0.25);
+}
+
+.bg-green-pastel {
+    background: rgb(194, 220, 185, 0.25);
+}
+
+.bg-purple-pastel {
+    background: rgb(170, 165, 205, 0.25);
+}
+
+.bg-navy-pastel {
+    background: rgb(168, 170, 208, 0.25);
+}
+
+.bg-yellow-pastel {
+    background: rgb(244, 238, 186, 0.25);
+}

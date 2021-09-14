@@ -38,7 +38,9 @@
                     @endif
                         <td class="text-center">
                             <i class="material-icons checagemAtrasada">alarm</i>
-                            @if(isset($atendimento->status->dh_mvto_estoque) && !is_null($atendimento->status->dh_mvto_estoque))
+                            @if(isset($atendimento->dh_recebimento))
+                            <i class="material-icons" style="color: green; vertical-align: inherit;">beenhere</i>
+                            @elseif(isset($atendimento->status->dh_mvto_estoque) && !is_null($atendimento->status->dh_mvto_estoque))
                             <i class="material-icons mt--1" style="color: #4285f4;">move_to_inbox</i>
                             @elseif(isset($atendimento->status->dh_avaliacao) && !is_null($atendimento->status->dh_avaliacao))
                             <i class="material-icons mt--1" style="color: #665aff;">local_pharmacy</i>

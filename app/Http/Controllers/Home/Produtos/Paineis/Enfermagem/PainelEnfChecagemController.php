@@ -175,6 +175,7 @@ class PainelEnfChecagemController extends Controller
                                         WHERE   PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO IS NOT NULL
                                         AND     PW_AVALIACAO_PRE_MED.CD_DOCUMENTO_CLINICO = PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
                                         AND		PW_AVALIACAO_PRE_MED.CD_AVALIACAO_PRE_MED = PW_AVALIACAO_ITPRE_MED.CD_AVALIACAO_PRE_MED
+                                        AND 	PW_DOCUMENTO_CLINICO.TP_STATUS			  IN ('FECHADO', 'ASSINADO')
                                         AND     PW_AVALIACAO_ITPRE_MED.CD_ITPRE_MED       = hritpre_med.cd_itpre_med
                                     ) AS dh_avaliacao,
                                     hritpre_cons.nm_usuario as nm_usuario_checagem,

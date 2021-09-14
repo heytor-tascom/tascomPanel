@@ -31,7 +31,7 @@ class PainelFarmCentralController extends Controller
         $params             = $request->only('setores', 'estoque');
         $metodo             = $request->only('aba');
         $metodo             = (isset($metodo['aba'])) ? $metodo['aba'] : 'todas';
-        $estoque            = (isset($params['estoque'])) ? $params['estoque'] : 18;
+        $estoque            = (isset($params['estoque'])) ? $params['estoque'] : 0;
   
         if (isset($params['setores'])) {
             $filterSetores = $params['setores'];
@@ -52,7 +52,7 @@ class PainelFarmCentralController extends Controller
         $transferencias   = self::transferencias($filterSetores, $estoque);
         $devolucoes       = self::devolucoes($filterSetores, $estoque);
         $controlados      = self::controlados($filterSetores, $estoque);
-        $atendidas        = self::atendidas($filterSetores, $estoque);
+        $atendidas        = self::atendidas($filterSetores, $estoque);  
         $setorSolicitacao = self::setorSolicitacao($filterSetores, $estoque);
 
         switch ($metodo) {
@@ -90,6 +90,7 @@ class PainelFarmCentralController extends Controller
             break;
         }                            
         $aba = $metodo;
+
         return view("home.produtos.paineis.farmacia.central.index", compact('todas', 'avulsas', 'transferencias', 'devolucoes', 'controlados', 'atendidas', 'setorSolicitacao', 'lista', 'title', 'tempoAtt', 'setores', 'aba', 'estoque', 'estoques'));
     }
 
@@ -128,7 +129,7 @@ class PainelFarmCentralController extends Controller
                         WHERE solsai_pro.cd_atendimento = atendime.cd_atendimento 
                         AND atendime.cd_paciente = paciente.cd_paciente 
                         AND solsai_pro.cd_prestador = prestador.cd_prestador
-                        AND leito.cd_leito = atendime.cd_leito 
+                        AND leito.cd_leito(+) = atendime.cd_leito 
                         AND solsai_pro.cd_turno = turno_setor.cd_turno(+) 
                         AND solsai_pro.cd_setor(+) = setor.cd_setor 
                         AND solsai_pro.cd_setor in ($setores)
@@ -190,7 +191,7 @@ class PainelFarmCentralController extends Controller
                         AND solsai_pro.cd_prestador = prestador.cd_prestador 
                         AND solsai_pro.cd_turno = turno_setor.cd_turno(+) 
                         AND solsai_pro.cd_setor(+) = setor.cd_setor 
-                        AND atendime.cd_leito = leito.cd_leito
+                        AND atendime.cd_leito(+) = leito.cd_leito
                         AND solsai_pro.tp_situacao IN ( 'P' ) 
                         AND solsai_pro.tp_solsai_pro IN ( 'P', 'S' ) 
                         AND SOLSAI_PRO.TP_ORIGEM_SOLICITACAO = 'AVU'
@@ -326,7 +327,7 @@ class PainelFarmCentralController extends Controller
                         AND solsai_pro.cd_turno = turno_setor.cd_turno(+) 
                         AND solsai_pro.cd_setor(+) = setor.cd_setor 
                              AND solsai_pro.cd_setor in ($setores)
-                        AND  ATENDIME.CD_LEITO = LEITO.CD_LEITO    
+                        AND  ATENDIME.CD_LEITO = LEITO.CD_LEITO(+)
                         AND solsai_pro.cd_estoque = $parEstoque    
                           AND solsai_pro.tp_situacao IN ( 'P' ) 
                         AND solsai_pro.tp_solsai_pro IN ( 'C')
@@ -385,7 +386,7 @@ class PainelFarmCentralController extends Controller
                             AND SOLSAI_PRO.CD_PRESTADOR = PRESTADOR.CD_PRESTADOR 
                             AND SOLSAI_PRO.CD_TURNO = TURNO_SETOR.CD_TURNO(+) 
                             AND SOLSAI_PRO.CD_SETOR(+) = SETOR.CD_SETOR 
-                            AND ATENDIME.CD_LEITO = LEITO.CD_LEITO
+                            AND ATENDIME.CD_LEITO = LEITO.CD_LEITO(+)
                             AND SOLSAI_PRO.CD_SETOR IN ($setores)
                             AND SOLSAI_PRO.CD_ESTOQUE = $parEstoque                    
                             AND SOLSAI_PRO.TP_SITUACAO IN ( 'C' ,'S' ) 
@@ -462,7 +463,7 @@ class PainelFarmCentralController extends Controller
                             WHERE solsai_pro.cd_atendimento = atendime.cd_atendimento 
                             AND atendime.cd_paciente = paciente.cd_paciente 
                             AND solsai_pro.cd_prestador = prestador.cd_prestador
-                            AND leito.cd_leito = atendime.cd_leito 
+                            AND leito.cd_leito(+) = atendime.cd_leito 
                             AND solsai_pro.cd_turno = turno_setor.cd_turno(+) 
                             AND solsai_pro.cd_setor(+) = setor.cd_setor 
                             AND solsai_pro.cd_setor in ($setores)

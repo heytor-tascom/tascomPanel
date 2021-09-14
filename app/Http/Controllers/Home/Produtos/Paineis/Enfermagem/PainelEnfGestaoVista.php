@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Home\Produtos\Paineis\Enfermagem;
 
 use DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+use App\Models\Produto;
 use App\Models\MV\Atendimento;
 use App\Models\MV\Setor;
-use Illuminate\Http\Request;
+
+use App\Http\Helpers\PacienteHelpers;
 
 class PainelEnfGestaoVista extends Controller
 {
@@ -14,21 +18,27 @@ class PainelEnfGestaoVista extends Controller
     {
         
         // $cdSetor = $setorId;//352;//94;
+        $produto = Produto::find(11);
+        $params = $request->only("setores");
+        $filterSetores = [];
 
-        $title = "GESTÃO À VISTA";
+        $title = $produto->nm_produto;
 
-        if (is_null($setorId)) {
-            $setor   = new Setor;
-            $setores = $setor->getByTipo(['P']);
-
-            return view('home.produtos.paineis.enfermagem.gestao-a-vista.setores', compact('title', 'setores'));
+        $setor   = new Setor;
+        $setores = $setor->getByTipo(['P']);
+        
+        if (isset($params['setores'])) {
+            $filterSetores = $params['setores'];
+            $filterSetores = explode(',', $filterSetores);
+        } else {
+            return view('home.produtos.paineis.enfermagem.gestao-a-vista.index', compact('title', 'setores'));
         }
 
         $atendimentos = Atendimento::join("paciente", "paciente.cd_paciente", "=", "atendime.cd_paciente")
                                 ->join("leito", "leito.cd_leito", "=", "atendime.cd_leito")
                                 ->join("unid_int", "unid_int.cd_unid_int", "=", "leito.cd_unid_int")
                                 ->whereNull("atendime.dt_alta")
-                                ->where("unid_int.cd_setor", $setorId)
+                                ->whereIn("unid_int.cd_setor", $filterSetores)
                                 ->with(["paciente" => function($query) {
                                     $query->select("cd_paciente", "nm_paciente", "dt_nascimento");
                                 }, "prestador" => function($query) {
@@ -40,13 +50,18 @@ class PainelEnfGestaoVista extends Controller
                                 atendime.cd_prestador,
                                 atendime.dt_atendimento,
                                 atendime.dt_alta,
-                                atendime.dt_alta_medica,
+                                CASE WHEN atendime.dt_alta_medica IS NOT NULL THEN TO_CHAR(atendime.dt_alta_medica, 'DD/MM/YYYY') || ' ' || TO_CHAR(atendime.hr_alta_medica, 'HH24:MI:SS') ELSE NULL END AS dt_alta_medica,
+                                CASE
+                                WHEN DT_ALTA_MEDICA IS NOT NULL THEN ROUND((SYSDATE - TO_DATE(TO_CHAR(DT_ALTA_MEDICA, 'DD/MM/YYYY') || ' ' || TO_CHAR(HR_ALTA_MEDICA, 'HH24:MI:SS'), 'DD/MM/YYYY HH24:MI:SS'))*1440,2)
+                                ELSE NULL END AS tempo_alta,
                                 atendime.dt_prevista_alta,
+                                atendime.dt_alta_medica,
                                 leito.cd_leito,
                                 leito.ds_leito,
                                 leito.ds_resumo,
                                 unid_int.cd_unid_int,
                                 unid_int.ds_unid_int,
+                                (SELECT nm_setor FROM setor WHERE setor.cd_setor = unid_int.cd_setor) as nm_setor,
                                 (
                                     SELECT 	COUNT(*) AS TOTAL
                                     FROM 	DBAMV.PW_DOCUMENTO_CLINICO DC,
@@ -54,7 +69,7 @@ class PainelEnfGestaoVista extends Controller
                                     WHERE	EC.CD_DOCUMENTO_CLINICO = DC.CD_DOCUMENTO_CLINICO
                                     AND   	TRUNC(DC.DH_FECHAMENTO) = TRUNC(SYSDATE)
                                     AND 	DC.TP_STATUS 			IN ('FECHADO', 'ASSINADO')
-                                    AND 	EC.CD_DOCUMENTO 		IN (599) -- 1106: Evolução Médica, 599: Plano Terapêutico
+                                    AND 	EC.CD_DOCUMENTO 		IN (599, 1106) -- 1106: Evolução Médica, 599: Plano Terapêutico
                                     AND 	DC.CD_ATENDIMENTO 		= atendime.cd_atendimento
                                     GROUP BY DC.CD_ATENDIMENTO
                                 ) as evo_med,
@@ -117,6 +132,8 @@ class PainelEnfGestaoVista extends Controller
         foreach($atendimentos as $key => $atendimento) {
             $checagem       = self::checagem($atendimento->cd_atendimento);
             $aprazamento    = self::aprazamento($atendimento->cd_atendimento);
+            $avaliacaoFarm  = PacienteHelpers::avaliacaoFarmacia($atendimento->cd_atendimento);
+            $dispensacao    = PacienteHelpers::dispensacao($atendimento->cd_atendimento);
             $pavci          = self::protocolo($atendimento->cd_atendimento, 4);
             $psepse         = self::protocolo($atendimento->cd_atendimento, 5);
             $psepseped      = self::protocolo($atendimento->cd_atendimento, 6);
@@ -133,6 +150,8 @@ class PainelEnfGestaoVista extends Controller
 
             $atendimentos[$key]->checagem       = isset($checagem[0]->checagem) ? $checagem[0]->checagem : null;
             $atendimentos[$key]->aprazamento    = isset($aprazamento[0]->aprazamento) ? $aprazamento[0]->aprazamento : null;
+            $atendimentos[$key]->avfarmac       = isset($avaliacaoFarm[0]->avaliacao) ? $avaliacaoFarm[0]->avaliacao : null;
+            $atendimentos[$key]->dispensacao    = isset($dispensacao[0]->dispensacao) ? $dispensacao[0]->dispensacao : null;
             $atendimentos[$key]->pavci          = isset($pavci[0]->cd_etapa_protocolo) ? $pavci[0] : null;
             $atendimentos[$key]->psepse         = isset($psepse[0]->cd_etapa_protocolo) ? $psepse[0] : null;
             $atendimentos[$key]->psepseped      = isset($psepseped[0]->cd_etapa_protocolo) ? $psepseped[0] : null;
@@ -148,7 +167,7 @@ class PainelEnfGestaoVista extends Controller
             $atendimentos[$key]->rlpp           = isset($rlpp[0]->cd_avaliacao) ? $rlpp[0]->cd_avaliacao : null;
         }
 
-        return view('home.produtos.paineis.enfermagem.gestao-a-vista.index', compact('title', 'atendimentos'));
+        return view('home.produtos.paineis.enfermagem.gestao-a-vista.index', compact('title', 'atendimentos', 'setores', 'setorId'));
     }
 
     public function protocolo($atendimentoId, $cdAlertaProtocolo)
@@ -216,6 +235,7 @@ class PainelEnfGestaoVista extends Controller
         return DB::connection('oracle')
                     ->select("
                     SELECT 	CASE
+                            WHEN SUM(CASE WHEN hritpre_med.cd_itpre_med IS NULL THEN 1 ELSE 0 END) > 0 AND SUM(CASE WHEN hritpre_med.cd_itpre_med IS NOT NULL THEN 1 ELSE 0 END) = 0 THEN 'V' -- NÃO HÁ APRAZAMENTO
                             WHEN SUM(CASE WHEN hritpre_med.cd_itpre_med IS NULL THEN 1 ELSE 0 END) > 0 THEN 'N' -- FALTANDO APRAZAMENTO
                             WHEN SUM(CASE WHEN hritpre_med.cd_itpre_med IS NOT NULL THEN 1 ELSE 0 END) > 0 THEN 'S' -- APRAZAMENTO OK
                             ELSE NULL END aprazamento
@@ -232,6 +252,8 @@ class PainelEnfGestaoVista extends Controller
                     AND 	trunc(pre_med.dt_validade) 	>= TRUNC(SYSDATE)
                     AND 	(itpre_med.sn_cancelado	IS NULL OR itpre_med.sn_cancelado NOT IN ('S'))
                     AND 	tip_esq.tp_checagem		= 'CC' -- CC - CONTROLA CHECAGEM
+                    AND 	tip_presc.cd_tip_esq	IN ('MDN', 'MDA', 'MDO', 'MDU', 'MED', 'DIC', 'TOS', 'NPD', 'ATB', 'IMT', 'PEP')
+                    AND     tip_presc.cd_produto    IS NOT NULL
                     GROUP BY pre_med.cd_atendimento
                     ");
     }
@@ -314,21 +336,15 @@ class PainelEnfGestaoVista extends Controller
     public function exameImagem($atendimentoId)
     {
         return DB::connection('oracle')
-                    ->select("SELECT	CASE
-                            WHEN ITPED_RX.SN_REALIZADO = 'N' THEN 'NR' -- NÃO REALIZADO
-                            WHEN ITPED_RX.SN_REALIZADO = 'S' AND ITPED_RX.CD_LAUDO IS NULL THEN 'R' -- REALIZADO (CHECAR SE TEM IMAGEM)
-                            WHEN ITPED_RX.SN_REALIZADO = 'S' AND ITPED_RX.CD_LAUDO IS NOT NULL THEN 'L' -- LAUDADO
-                            ELSE NULL
-                            END AS IMG
-                    FROM 	DBAMV.PED_RX,
-                            DBAMV.ITPED_RX
-                    WHERE 	PED_RX.CD_ATENDIMENTO 	= $atendimentoId
-                    AND 	PED_RX.CD_PED_RX 		= (
-                                                        SELECT MAX(CD_PED_RX)
-                                                        FROM 	PED_RX
-                                                        WHERE 	PED_RX.CD_ATENDIMENTO = $atendimentoId
-                                                    )
-                    AND 	PED_RX.CD_PED_RX 		= ITPED_RX.CD_PED_RX
+                    ->select("  SELECT  CASE
+                                        WHEN Count(CASE WHEN ITPED_RX.SN_REALIZADO = 'N' THEN 1 ELSE 0 END) > 0 THEN 'NR' -- NÃO REALIZADO
+                                        WHEN Count(CASE WHEN ITPED_RX.SN_REALIZADO = 'S' AND ITPED_RX.CD_LAUDO IS NULL THEN 1 ELSE 0 END) > 0 THEN 'R' -- REALIZADO (CHECAR SE TEM IMAGEM)
+                                        WHEN Count(CASE WHEN ITPED_RX.SN_REALIZADO = 'S' AND ITPED_RX.CD_LAUDO IS NOT NULL THEN 1 ELSE 0 END) > 0 THEN 'L' -- LAUDADO
+                                        END AS IMG
+                                FROM 	DBAMV.PED_RX,
+                                        DBAMV.ITPED_RX
+                                WHERE 	PED_RX.CD_ATENDIMENTO 	= $atendimentoId
+                                AND 	PED_RX.CD_PED_RX 		= ITPED_RX.CD_PED_RX
                     ");
     }
 }

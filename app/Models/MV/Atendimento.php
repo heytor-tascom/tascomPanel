@@ -24,6 +24,11 @@ class Atendimento extends Model
         return $this->hasOne(Leito::class, "cd_leito", "cd_leito");
     }
 
+    public function origem()
+    {
+        return $this->hasOne(Origem::class, "cd_ori_ate", "cd_ori_ate");
+    }
+
     public function prestador()
     {
         return $this->hasOne(Prestador::class, "cd_prestador", "cd_prestador");
