@@ -54,7 +54,7 @@
                         $dias = $helpers::diffDate(date("d/m/Y", strtotime($atendimento->dt_atendimento)));
                         $nomeAbreviado = $helpers::abreviarNome($atendimento->paciente->nm_paciente);
                         @endphp
-                        
+
                         <tr>
                             <!-- Leito -->
                             <td class="text-center">{{ $atendimento->ds_resumo }}</td>
@@ -77,10 +77,10 @@
                             <!-- <td class="text-center">{{ $idade }} ANO</td> -->
                             <!-- @endif -->
                             <!-- Fim Idade -->
-                            
+
                             <!-- Dias de Internação -->
                             <!-- <td class="text-center">{{ $dias }}</td> -->
-                            
+
                             <!-- Nome do Médico(a) -->
                             <!-- <td>{{ $helpers::abreviarNome($atendimento->prestador->nm_prestador) }}</td> -->
 
@@ -98,9 +98,10 @@
                             @elseif($atendimento->aprazamento == 'N')
                             <td class="text-center bg-red-pastel"><i class="material-icons text-danger">highlight_off</i></td>
                             @else
+                            <td class="text-center bg-red-pastel"><i class="material-icons text-success">check_circle_outline</i></td>
                             @endif
                             <!-- Fim Aprazamento -->
-                            
+
                             <!-- Avaliação -->
                             @if ($atendimento->avfarmac > 0)
                             <td class="text-center bg-red-pastel"><i class="material-icons text-danger">highlight_off</i></td>
@@ -108,7 +109,7 @@
                             <td class="text-center bg-red-pastel"><i class="material-icons text-success">check_circle_outline</i></td>
                             @endif
                             <!-- Fim Avaliação -->
-                            
+
                             <!-- Dispensação -->
                             @if ($atendimento->dispensacao > 0)
                             <td class="text-center bg-red-pastel"><i class="material-icons text-success">check_circle_outline</i></td>
@@ -116,8 +117,8 @@
                             <td class="text-center bg-red-pastel"><i class="material-icons text-danger">highlight_off</i></td>
                             @endif
                             <!-- Fim Dispensação -->
-                            
-                            <!-- Avaliação -->
+
+                            <!-- Checagem -->
                             @if ($atendimento->checagem == 'A')
                             <td class="text-center bg-red-pastel"><i class="material-icons text-danger animated pulse infinite">error_outline</i></td>
                             @elseif ($atendimento->checagem == 'C')
@@ -127,8 +128,8 @@
                             @else
                             <td class="text-center bg-red-pastel"></td>
                             @endif
-                            <!-- Fim Avaliação -->
-                            
+                            <!-- Fim Checagem -->
+
                             <!-- Exame Laboratorial -->
                             <!-- Realizado -->
                             @if ($atendimento->exalab == 'R')
@@ -139,13 +140,13 @@
                             <td class="text-center bg-blue-pastel"><i class="medical-icon-i-laboratory text-primary" style="font-size: 2em"></i></td>
                             <!-- Liberado -->
                             <td class="text-center bg-blue-pastel"><i class="material-icons text-success">assignment_turned_in</i></td>
-                            
+
                             <!-- Coletado -->
                             @elseif ($atendimento->exalab == 'C')
                             <td class="text-center bg-blue-pastel"><i class="material-icons text-success">check_circle_outline</i></td>
                             <td class="text-center bg-blue-pastel"><i class="medical-icon-i-laboratory text-primary" style="font-size: 2em"></i></td>
                             <td class="text-center bg-blue-pastel"></td>
-                            
+
                             <!-- Solicitado -->
                             @elseif ($atendimento->exalab == 'S')
                             <td class="text-center bg-blue-pastel"><i class="material-icons text-warning">query_builder</i></td>
@@ -157,7 +158,7 @@
                             <td class="text-center bg-blue-pastel"></td>
                             @endif
                             <!-- Fim Exame Laboratorial -->
-                            
+
                             <!-- Exame Imagem -->
                             @if($atendimento->exaimg == 'R')
                             <td class="text-center bg-teal-pastel"><i class="material-icons text-success">check_circle_outline</i></td>
@@ -177,7 +178,7 @@
                             <td class="text-center bg-teal-pastel"></td>
                             @endif
                             <!-- Fim Exame Imagem -->
-                            
+
                             <!-- Parecer -->
                             <!-- <td class="text-center">
                                 @if($atendimento->parecer > 0)
@@ -186,7 +187,7 @@
                             </td>
                             -->
                             <!-- Status do Paciente -->
-                            
+
                             <!-- <td class="text-center"><i class="medical-icon-i-surgery text-primary" style="font-size: 2em"></i></td> -->
                             {{-- @if (!is_null($atendimento->dt_alta_medica)) --}}
                             {{-- <td class="text-center bg-pink-pastel"><i class="medical-icon-i-outpatient text-success" style="font-size: 2em"></i></td> --}}

@@ -16,7 +16,7 @@ class PainelEnfGestaoVista extends Controller
 {
     public function index($setorId = null, Request $request)
     {
-        
+
         // $cdSetor = $setorId;//352;//94;
         $produto = Produto::find(11);
         $params = $request->only("setores");
@@ -26,7 +26,7 @@ class PainelEnfGestaoVista extends Controller
 
         $setor   = new Setor;
         $setores = $setor->getByTipo(['P']);
-        
+
         if (isset($params['setores'])) {
             $filterSetores = $params['setores'];
             $filterSetores = explode(',', $filterSetores);
@@ -62,41 +62,8 @@ class PainelEnfGestaoVista extends Controller
                                 unid_int.cd_unid_int,
                                 unid_int.ds_unid_int,
                                 (SELECT nm_setor FROM setor WHERE setor.cd_setor = unid_int.cd_setor) as nm_setor,
-                                (
-                                    SELECT 	COUNT(*) AS TOTAL
-                                    FROM 	DBAMV.PW_DOCUMENTO_CLINICO DC,
-                                            DBAMV.PW_EDITOR_CLINICO EC
-                                    WHERE	EC.CD_DOCUMENTO_CLINICO = DC.CD_DOCUMENTO_CLINICO
-                                    AND   	TRUNC(DC.DH_FECHAMENTO) = TRUNC(SYSDATE)
-                                    AND 	DC.TP_STATUS 			IN ('FECHADO', 'ASSINADO')
-                                    AND 	EC.CD_DOCUMENTO 		IN (599, 1106) -- 1106: Evolução Médica, 599: Plano Terapêutico
-                                    AND 	DC.CD_ATENDIMENTO 		= atendime.cd_atendimento
-                                    GROUP BY DC.CD_ATENDIMENTO
-                                ) as evo_med,
-                                (
-                                    SELECT 	SUM(TOTAL)
-                                    FROM 	(
-                                        SELECT 	COUNT(*) AS TOTAL
-                                        FROM 	PW_DOCUMENTO_CLINICO
-                                        WHERE 	CD_ATENDIMENTO 			= atendime.cd_atendimento
-                                        AND 	CD_OBJETO 				IN (444, 449, 450, 454)
-                                        AND   	TRUNC(DH_FECHAMENTO) 	= TRUNC(SYSDATE)
-                                        AND 	TP_STATUS 				IN ('FECHADO', 'ASSINADO')
-                                        GROUP BY CD_ATENDIMENTO
-                                        
-                                        UNION ALL
-                                        
-                                        SELECT 	COUNT(*) AS TOTAL
-                                        FROM 	DBAMV.PW_DOCUMENTO_CLINICO DC,
-                                                DBAMV.PW_EDITOR_CLINICO EC
-                                        WHERE	EC.CD_DOCUMENTO_CLINICO = DC.CD_DOCUMENTO_CLINICO
-                                        AND   	TRUNC(DC.DH_FECHAMENTO) = TRUNC(SYSDATE)
-                                        AND 	DC.TP_STATUS 			IN ('FECHADO', 'ASSINADO')
-                                        AND 	EC.CD_DOCUMENTO 		IN (598) -- 699: Evolução Enfermagem, 598: Evolução Nefro
-                                        AND 	DC.CD_ATENDIMENTO 		= atendime.cd_atendimento
-                                        GROUP BY DC.CD_ATENDIMENTO
-                                    )
-                                ) as evo_enf,
+                                null as evo_med,
+                                null as evo_enf,
                                 (
                                     SELECT  count(cd_pre_med)
                                     FROM    pre_med
@@ -105,16 +72,7 @@ class PainelEnfGestaoVista extends Controller
                                     AND     tp_pre_med = 'M'
                                     AND     dt_referencia >= trunc(SYSDATE)
                                 ) as pre_med,
-                                (
-                                    SELECT 	count(*) AS total
-                                    FROM 	PW_PROBLEMA,
-                                            PW_ALERGIA_PAC,
-                                            SUBSTANCIA
-                                    WHERE 	CD_PACIENTE = atendime.cd_paciente
-                                    AND 	PW_PROBLEMA.CD_PROBLEMA = PW_ALERGIA_PAC.CD_PROBLEMA
-                                    AND 	PW_ALERGIA_PAC.CD_SUBSTANCIA = SUBSTANCIA.CD_SUBSTANCIA(+)
-                                    AND 	DS_OBSERVACAO NOT LIKE RTRIM(LTRIM('NEGA%'))
-                                ) as alergia,
+                                (null) as alergia,
                                 (
                                     null
                                 ) as aprazamento,
@@ -134,14 +92,14 @@ class PainelEnfGestaoVista extends Controller
             $aprazamento    = self::aprazamento($atendimento->cd_atendimento);
             $avaliacaoFarm  = PacienteHelpers::avaliacaoFarmacia($atendimento->cd_atendimento);
             $dispensacao    = PacienteHelpers::dispensacao($atendimento->cd_atendimento);
-            $pavci          = self::protocolo($atendimento->cd_atendimento, 4);
-            $psepse         = self::protocolo($atendimento->cd_atendimento, 5);
-            $psepseped      = self::protocolo($atendimento->cd_atendimento, 6);
-            $ptev           = self::protocolo($atendimento->cd_atendimento, 2);
-            $ptevcir        = self::protocolo($atendimento->cd_atendimento, 13);
-            $pqueda         = self::protocolo($atendimento->cd_atendimento, 10);
-            $pbronco        = self::protocolo($atendimento->cd_atendimento, 3);
-            $pbronconeoped  = self::protocolo($atendimento->cd_atendimento, 14);
+            // $pavci          = self::protocolo($atendimento->cd_atendimento, 4);
+            // $psepse         = self::protocolo($atendimento->cd_atendimento, 5);
+            // $psepseped      = self::protocolo($atendimento->cd_atendimento, 6);
+            // $ptev           = self::protocolo($atendimento->cd_atendimento, 2);
+            // $ptevcir        = self::protocolo($atendimento->cd_atendimento, 13);
+            // $pqueda         = self::protocolo($atendimento->cd_atendimento, 10);
+            // $pbronco        = self::protocolo($atendimento->cd_atendimento, 3);
+            // $pbronconeoped  = self::protocolo($atendimento->cd_atendimento, 14);
             $precaucao      = self::precaucao($atendimento->cd_paciente);
             $exameLab       = self::exameLaboratorio($atendimento->cd_atendimento);
             $exameImagem    = self::exameImagem($atendimento->cd_atendimento);
@@ -152,14 +110,14 @@ class PainelEnfGestaoVista extends Controller
             $atendimentos[$key]->aprazamento    = isset($aprazamento[0]->aprazamento) ? $aprazamento[0]->aprazamento : null;
             $atendimentos[$key]->avfarmac       = isset($avaliacaoFarm[0]->avaliacao) ? $avaliacaoFarm[0]->avaliacao : null;
             $atendimentos[$key]->dispensacao    = isset($dispensacao[0]->dispensacao) ? $dispensacao[0]->dispensacao : null;
-            $atendimentos[$key]->pavci          = isset($pavci[0]->cd_etapa_protocolo) ? $pavci[0] : null;
-            $atendimentos[$key]->psepse         = isset($psepse[0]->cd_etapa_protocolo) ? $psepse[0] : null;
-            $atendimentos[$key]->psepseped      = isset($psepseped[0]->cd_etapa_protocolo) ? $psepseped[0] : null;
-            $atendimentos[$key]->ptev           = isset($ptev[0]->cd_etapa_protocolo) ? $ptev[0] : null;
-            $atendimentos[$key]->ptevcir        = isset($ptevcir[0]->cd_etapa_protocolo) ? $ptevcir[0] : null;
-            $atendimentos[$key]->pqueda         = isset($pqueda[0]->cd_etapa_protocolo) ? $pqueda[0] : null;
-            $atendimentos[$key]->pbronco        = isset($pbronco[0]->cd_etapa_protocolo) ? $pbronco[0] : null;
-            $atendimentos[$key]->pbronconeoped  = isset($pbronconeoped[0]->cd_etapa_protocolo) ? $pbronconeoped[0] : null;
+            // $atendimentos[$key]->pavci          = isset($pavci[0]->cd_etapa_protocolo) ? $pavci[0] : null;
+            // $atendimentos[$key]->psepse         = isset($psepse[0]->cd_etapa_protocolo) ? $psepse[0] : null;
+            // $atendimentos[$key]->psepseped      = isset($psepseped[0]->cd_etapa_protocolo) ? $psepseped[0] : null;
+            // $atendimentos[$key]->ptev           = isset($ptev[0]->cd_etapa_protocolo) ? $ptev[0] : null;
+            // $atendimentos[$key]->ptevcir        = isset($ptevcir[0]->cd_etapa_protocolo) ? $ptevcir[0] : null;
+            // $atendimentos[$key]->pqueda         = isset($pqueda[0]->cd_etapa_protocolo) ? $pqueda[0] : null;
+            // $atendimentos[$key]->pbronco        = isset($pbronco[0]->cd_etapa_protocolo) ? $pbronco[0] : null;
+            // $atendimentos[$key]->pbronconeoped  = isset($pbronconeoped[0]->cd_etapa_protocolo) ? $pbronconeoped[0] : null;
             $atendimentos[$key]->precaucao      = isset($precaucao[0]->ds_rgb_hexadecimal) ? $precaucao[0]->ds_rgb_hexadecimal : null;
             $atendimentos[$key]->exalab         = isset($exameLab[0]->lab) ? $exameLab[0]->lab : null;
             $atendimentos[$key]->exaimg         = isset($exameImagem[0]->img) ? $exameImagem[0]->img : null;
@@ -313,7 +271,7 @@ class PainelEnfGestaoVista extends Controller
     public function exameLaboratorio($atendimentoId)
     {
         return DB::connection('oracle')
-                    ->select("SELECT 	CASE 
+                    ->select("SELECT 	CASE
                                     WHEN SUM(CASE WHEN ITPED_LAB.SN_REALIZADO = 'S' THEN 1 ELSE 0 END) > 0 THEN 'R'
                                     WHEN SUM(CASE WHEN AMOSTRA.DT_COLETA IS NOT NULL AND ITPED_LAB.SN_REALIZADO IS NULL THEN 1 ELSE 0 END) > 0 THEN 'C'
                                     WHEN SUM(CASE WHEN ITPED_LAB.SN_REALIZADO IS NULL THEN 1 ELSE 0 END) > 0 THEN 'S'

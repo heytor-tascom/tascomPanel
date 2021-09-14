@@ -17,7 +17,7 @@
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <strong class="text-gray-dark" id="id{{ $produto->id }}">{{ $produto->nm_produto }}</strong>
                                 <div class="float-right">
-                                    @if($produto->id == 8 || $produto->id == 19 || $produto->id == 20 || $produto->id == 21)
+                                    @if($produto->id == 19 || $produto->id == 20 || $produto->id == 21)
                                     <a class="btn btn-secondary btn-sm" href="{{ $produto->ds_produto }}" target="_blank">Abrir</a>
                                     @else
                                     <a class="btn btn-secondary btn-sm" href="{{ route($produto->nm_rota) }}" target="_blank">Abrir</a>

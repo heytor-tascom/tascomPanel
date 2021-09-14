@@ -13,7 +13,7 @@
                         <th class="text-center" colspan="10"></th>
                         <th class="text-center bg-green-pastel" colspan="2">EVOLUÇÕES</th>
                         <th class="text-center bg-red-pastel" colspan="4">MEDICAÇÕES</th>
-                        <th class="text-center bg-yellow-pastel">PROTOCOLOS</th>
+                        <!-- <th class="text-center bg-yellow-pastel">PROTOCOLOS</th> -->
                         <th class="text-center bg-purple-pastel" colspan="2">RISCOS</th>
                         <th class="text-center bg-teal-pastel" colspan="2">EXAMES</th>
                         <th class="text-center bg-pink-pastel" colspan="4">GERAL</th>
@@ -36,7 +36,7 @@
                         <th class="text-center bg-red-pastel">VLD</th>
                         <!-- <th class="text-center bg-red-pastel">DSP</th> -->
                         <th class="text-center bg-red-pastel">CHE</th>
-                        <th class="text-center bg-yellow-pastel" style="width: 8%"></th>
+                        <!-- <th class="text-center bg-yellow-pastel" style="width: 8%"></th> -->
                         <th class="text-center bg-purple-pastel">RQ</th>
                         <th class="text-center bg-purple-pastel">LPP</th>
                         <th class="text-center bg-teal-pastel">LAB</th>
@@ -55,7 +55,7 @@
                         $dias = $helpers::diffDate(date("d/m/Y", strtotime($atendimento->dt_atendimento)));
                         $nomeAbreviado = $helpers::abreviarNome($atendimento->paciente->nm_paciente);
                         @endphp
-                        
+
                         @if($atendimento->tempo_alta > 60 && !$atendimento->dt_alta_medica)
                         <tr class="checagemAtrasada">
                         @else
@@ -82,13 +82,13 @@
                             <td class="text-center">{{ $idade }} ANO</td>
                             @endif
                             <!-- Fim Idade -->
-                            
+
                             <!-- Dias de Internação -->
                             <td class="text-center">{{ $dias }}</td>
-                            
+
                             <!-- Nome do Médico(a) -->
                             <td>{{ $helpers::abreviarNome($atendimento->prestador->nm_prestador) }}</td>
-                            
+
                             <!-- Evolução Médica -->
                             <td class="text-center bg-green-pastel">
                             @if ($atendimento->evo_med > 0)
@@ -97,7 +97,7 @@
                             <i class="material-icons text-danger">highlight_off</i>
                             @endif
                             </td>
-                            
+
                             <!-- Evolução Enfermagem -->
                             <td class="text-center bg-green-pastel">
                             @if ($atendimento->evo_enf > 0)
@@ -106,7 +106,7 @@
                             <i class="material-icons text-danger">highlight_off</i>
                             @endif
                             </td>
-                            
+
                             <!-- Prescrição -->
                             <td class="text-center bg-red-pastel">
                                 @if($atendimento->pre_med > 0)
@@ -116,7 +116,7 @@
                                 @endif
                             </td>
                             <!-- Fim Prescrição -->
-                            
+
                             <!-- Aprazamento -->
                             <td class="text-center bg-red-pastel">
                                 @if ($atendimento->aprazamento == 'N')
@@ -127,7 +127,7 @@
                                 @else
                                 @endif
                             </td>
-                            
+
                             <!-- Avaliação -->
                             <td class="text-center bg-red-pastel">
                                 @if ($atendimento->avfarmac > 0)
@@ -137,7 +137,7 @@
                                 @endif
                             </td>
                             <!-- Fim Avaliação -->
-                            
+
                             <!-- Dispensação -->
                             <!-- <td class="text-center bg-red-pastel">
                                 @if ($atendimento->dispensacao > 0)
@@ -158,60 +158,14 @@
                                 @else
                                 @endif
                             </td>
-                            
-                            <!-- Protocolos -->
-                            <td class="text-center bg-yellow-pastel">
-                                
-                                <!-- SEPSE -->
-                                @if (isset($atendimento->psepse->cd_etapa_protocolo) && $atendimento->psepse->cd_etapa_protocolo == 2)
-                                <span class="badge" style="color: #fff; font-size: 1.05em; background: #{{ $atendimento->psepse->cor }}">{{ $atendimento->psepse->ds_sigla_protocolo }}</span>
-                                @else
-                                @endif
-                                
-                                <!-- SEPSE PED -->
-                                @if (isset($atendimento->psepseped->cd_etapa_protocolo) && $atendimento->psepseped->cd_etapa_protocolo == 2)
-                                <span class="badge" style="color: #fff; font-size: 1.05em; background: #{{ $atendimento->psepseped->cor }}">{{ $atendimento->psepseped->ds_sigla_protocolo }}</span>
-                                @else
-                                @endif
-                                
-                                <!-- TEV -->
-                                @if (isset($atendimento->ptev->cd_etapa_protocolo) && $atendimento->ptev->cd_etapa_protocolo == 2)
-                                <span class="badge" style="color: #fff; font-size: 1.05em; background: #{{ $atendimento->ptev->cor }}">{{ $atendimento->ptev->ds_sigla_protocolo }}</span>
-                                @else
-                                @endif
-                                
-                                <!-- TEV CIR-->
-                                @if (isset($atendimento->ptevcir->cd_etapa_protocolo) && $atendimento->ptevcir->cd_etapa_protocolo == 2)
-                                <span class="badge" style="color: #fff; font-size: 1.05em; background: #{{ $atendimento->ptevcir->cor }}">{{ $atendimento->ptevcir->ds_sigla_protocolo }}</span>
-                                @else
-                                @endif
-                                
-                                <!-- QUEDA -->
-                                @if (isset($atendimento->pqueda->cd_etapa_protocolo) && $atendimento->pqueda->cd_etapa_protocolo == 2)
-                                <span class="badge" style="color: #fff; font-size: 1.05em; background: #{{ $atendimento->pqueda->cor }}">{{ $atendimento->pqueda->ds_sigla_protocolo }}</span>
-                                @else
-                                @endif
-                                
-                                <!-- BRONCO -->
-                                @if (isset($atendimento->pbronco->cd_etapa_protocolo) && $atendimento->pbronco->cd_etapa_protocolo == 2)
-                                <span class="badge" style="color: #fff; font-size: 1.05em; background: #{{ $atendimento->pbronco->cor }}">{{ $atendimento->pbronco->ds_sigla_protocolo }}</span>
-                                @else
-                                @endif
-                                
-                                <!-- BRONCO NEO/PED-->
-                                @if (isset($atendimento->pbronconeoped->cd_etapa_protocolo) && $atendimento->pbronconeoped->cd_etapa_protocolo == 2)
-                                <span class="badge" style="color: #fff; font-size: 1.05em; background: #{{ $atendimento->pbronconeoped->cor }}">{{ $atendimento->pbronconeoped->ds_sigla_protocolo }}</span>
-                                @else
-                                @endif
-                            </td>
-                            
+
                             <!-- Risco de Queda -->
                             <td class="text-center bg-purple-pastel">
                                 @if($atendimento->rq > 0)
                                 <i class="material-icons text-danger animated pulse infinite">error_outline</i>
                                 @endif
                             </td>
-                            
+
                             <!-- Risco de LPP -->
                             <td class="text-center bg-purple-pastel">
                                 @if($atendimento->rlpp > 0)
@@ -235,7 +189,7 @@
                                 @endif
                             </td>
                             <!-- Fim Exame Laboratorial -->
-                            
+
                             <!-- Exame Imagem -->
                             <td class="text-center bg-teal-pastel">
                                 @if($atendimento->exaimg == 'R')
@@ -248,7 +202,7 @@
                                 @endif
                             </td>
                             <!-- Fim Exame Imagem -->
-                            
+
                             <!-- Alergias -->
                             <td class="text-center bg-pink-pastel">
                                 @if($atendimento->alergia > 0)
@@ -257,7 +211,7 @@
                                 @endif
                             </td>
                             <!-- Fim Alergias -->
-                            
+
                             <!-- Classificação da CCIH -->
                             <td class="text-center bg-pink-pastel">
                                 @if ($atendimento->precaucao)
@@ -266,16 +220,16 @@
                                 @endif
                             </td>
                             <!-- Fim Classificação da CCIH -->
-                            
+
                             <!-- Parecer -->
                             <td class="text-center bg-pink-pastel">
                                 @if($atendimento->parecer > 0)
                                 <span class="badge badge-primary" style="font-size: 1.15em">{{ $atendimento->parecer }}</span>
                                 @endif
                             </td>
-                            
+
                             <!-- Status do Paciente -->
-                            
+
                             <!-- <td class="text-center"><i class="medical-icon-i-surgery text-primary" style="font-size: 2em"></i></td> -->
                             @if (!is_null($atendimento->dt_alta_medica))
                             <td class="text-center text-success bg-pink-pastel"><i class="medical-icon-i-outpatient" style="font-size: 2em"></i><br/>{{ $atendimento->dt_alta_medica }}</td>

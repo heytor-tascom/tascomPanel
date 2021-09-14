@@ -3,12 +3,12 @@
 return [
     'oracle' => [
         'driver' => 'oracle',
-        'host' => '10.0.38.9',
+        'host' => '10.17.71.150',
         'port' => '1521',
-        'database' => 'PRD_MV2000',
-        'service_name' => 'prd',
-        'username' => 'rhpleitura',
-        'password' => 'peti5386',
+        'database' => 'TREINAMENTO.WORLD',
+        'service_name' => 'MVMRCHT',
+        'username' => 'tascomDBHML',
+        'password' => 'Ahs!N6*',
         'charset' => 'AL32UTF8',
         'prefix' => '',
     ],
