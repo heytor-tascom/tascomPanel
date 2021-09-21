@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" href="{{ asset('rhp') }}/favicon.ico">
-    <title>RHP</title>
+    <title>Hospital Rondon</title>
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
@@ -16,18 +16,18 @@
     <link href="{{ asset('tascom') }}/plugins/animatecss/animate.css" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
+
     <!-- Bootstrap Select -->
     <link href="{{ asset('tascom') }}/plugins/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet">
 
     <link href="{{ asset('tascom') }}/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
-    
+
     <link rel="stylesheet" href="{{ asset('tascom') }}/css/main.css">
 </head>
 <body>
 
     @yield('content')
-    
+
     <script src="{{ asset('tascom') }}/js/core/jquery.min.js"></script>
     <script src="{{ asset('tascom') }}/js/core/popper.min.js"></script>
     <script src="{{ asset('tascom') }}/js/core/bootstrap-material-design.min.js"></script>

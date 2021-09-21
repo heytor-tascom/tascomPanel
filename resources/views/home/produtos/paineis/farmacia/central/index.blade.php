@@ -1,14 +1,14 @@
 @extends('layouts.rhp.app')
 
 @section('content')
-    @include('layouts.rhp.navbars.farmacia.central') 
+    @include('layouts.rhp.navbars.farmacia.central')
     <div class="container-fluid">
         <div class="card mt-5 pt-4">
             <div class="card-body px-0 pt-4">
                 <div class="w-100 mt-5"></div>
                 <table class="table table-sm" id="tableSolicitacoes">
                     <thead>
-                            
+
                             @if ($aba == 'avulsas' || $aba == 'devolucoes')
                                 <tr>
                                     <th class="text-center">TIPO</th>
@@ -33,26 +33,26 @@
                                     <th>SETOR / ESTOQUE</th>
                                     <th class="text-center">STATUS</th>
                                     <th class="text-center">1º NECESSIDADE</th>
-                                    <th>TURNO</th>
+                                    <!-- <th>TURNO</th> -->
                                     <th class="text-center">QR CODE</th>
                                 </tr>
-                            @endif  
-                        
+                            @endif
+
                     </thead>
                     <tbody>
                         @inject('helperTpSolic', 'App\Http\Helpers\TipoSolicitacaoHelpers')
                         @inject('helperSituacaoSolic', 'App\Http\Helpers\SituacaoSolicitacaoHelpers')
                         @inject('helperAvulsa', 'App\Http\Helpers\SolicitacaoAvulsaHelpers')
                         @inject('helperControlado', 'App\Http\Helpers\SolicitacaoControladosHelpers')
-                        
+
                         @forelse ($lista as $toda)
-                            
+
                             @if ($toda->sn_urgente == 'S')
-                                @php $classLinha = 'text-danger'; @endphp 
+                                @php $classLinha = 'text-danger'; @endphp
                             @else
-                                @php $classLinha = '';  @endphp 
-                            @endif  
-                        
+                                @php $classLinha = '';  @endphp
+                            @endif
+
                             <tr class="{{ $classLinha }}">
                                 <td class="text-center" style="font-size:1.8em;">
                                     <i class="fas fa-exclamation-triangle"></i>
@@ -71,18 +71,13 @@
                                     {!! $helperTpSolic::tipoSolicitacao($toda->tp_solsai_pro) !!}
                                     {!! $helperControlado::controladosSolicitacao($toda->sn_pscotropico) !!}
                                     <img style="vertical-align: bottom;" src="{{asset("tascom")}}/img/icones/{{$helperSituacaoSolic::situacaoSolicitacao($toda->tp_situacao) }}.png">
-                                    
+
                                 </td>
                                 <td class="text-center">{{ $toda->pri_necessidade }}</td>
-                                @if ($aba == 'avulsas' || $aba == 'devolucoes')
-                                
-                                @else
-                                    <td>{{ $toda->ds_turno }}</td>
-                                @endif
-                                
+
                                 <td class="text-center"><img src="{{asset('tascom')}}/qrcode/gerar/php/qr_img.php?d={{ $toda->cd_solsai_pro }}" style="width:75px;"></td>
                             </tr>
-                        @empty    
+                        @empty
 
                             <tr>
                                 <td colspan="11">
@@ -95,7 +90,7 @@
 
                                 </td>
                             </tr>
-                            
+
                         @endforelse
                     </tbody>
                 </table>
@@ -109,10 +104,10 @@
 <script>
     $(function(){
 
-    setInterval(function(){ 
-       location.reload(); 
-    }, {{ $tempoAtt }} );        
-        
+    setInterval(function(){
+       location.reload();
+    }, {{ $tempoAtt }} );
+
     $('#legendas').popover({
         trigger: 'focus',
         html: true
@@ -137,7 +132,7 @@
     {
         let idActive = $('.btn').filter('.active');
         let idActiveAtual = idActive[0].id;
-        
+
         let setores = $("select[name=setores]").val();
         let estoque = $("select[name=estoque]").val();
         if (estoque == null){
@@ -147,7 +142,7 @@
         if (setores.length > 0 || setores > 0) {
 
             window.history.replaceState("", "Painel Farmacia Central", "?estoque="+estoque+"&setores="+setores+"&aba="+idActiveAtual);
-        
+
         } else {
             // $("#lista-pacientes tbody").empty();
         }
@@ -156,21 +151,21 @@
     function trocaMetodo(metodo)
     {
         let idActive = $('.btn').filter('.active');
-        
+
         let idActiveAtual = idActive[0].id;
 
         $('#'+idActiveAtual).removeClass('active');
         $('#'+idActiveAtual).removeClass('active');
 
         let novoAtivo = $('#'+metodo).addClass('active');
-        
+
         let setores = $("select[name=setores]").val();
 
         if (setores.length > 0) {
 
             window.history.replaceState("", "Painel Farmacia Central", "?estoque={{$estoque}}&setores="+setores+"&aba="+metodo);
-            location.reload(); 
-        
+            location.reload();
+
         } else {
             // $("#lista-pacientes tbody").empty();
         }
@@ -182,24 +177,24 @@
         filter  = input.value.toUpperCase();
         table   = document.getElementById("tableSolicitacoes");
         tr      = table.getElementsByTagName("tr");
-        
+
         for (i = 0; i < tr.length; i++) {
             td = tr[i].getElementsByTagName("td")[4];
-            
+
             if (td) {
                 txtValue = td.textContent || td.innerText;
-                
+
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else {
                     tr[i].style.display = "none";
                 }
-            }       
+            }
         }
     }
 
     $('.selectpicker, .selectpicker-estoque').on('hidden.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-        location.reload(); 
+        location.reload();
     });
 </script>
 @endpush

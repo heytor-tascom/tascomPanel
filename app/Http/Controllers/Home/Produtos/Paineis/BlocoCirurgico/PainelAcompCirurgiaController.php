@@ -15,12 +15,12 @@ class PainelAcompCirurgiaController extends Controller
 
     public function index(Request $request)
     {
-        $produto = Produto::find(10);
+        $produto = Produto::find(15);
         $title    = $produto->nm_produto;
         $tempoAtt = $produto->tempo_atualizacao;
 
 //        $blocosGet           = [];
-  
+
         $params             = $request->only('blocos');
 
         $filteblc = (isset($params['blocos'])) ? $params['blocos'] : 0;
@@ -28,7 +28,7 @@ class PainelAcompCirurgiaController extends Controller
 
         $blocos            = self::blocos();
         $cirurgias         = self::sqlAcompCirurgia($filteblc);
-        
+
         //dd($cirurgias);
 
         return view("home.produtos.paineis.blocoCirurgico.acompCirurgia.index" , compact('blocos', 'tempoAtt', 'title', 'cirurgias'));
@@ -43,7 +43,7 @@ class PainelAcompCirurgiaController extends Controller
     public static function sqlAcompCirurgia($parBlc)
     {
         $cdBlocos = "'".implode("','",array_filter($parBlc))."'";
-        
+
         return DB::connection('oracle')
                     ->select("SELECT P_linha,
                     dt_nascimento,
@@ -64,7 +64,7 @@ class PainelAcompCirurgiaController extends Controller
                     Leito STATUS_LEITO,
                     SIGNIN,
                     SIGNOUT,
-                    TIMEOUT,     
+                    TIMEOUT,
                     CONFIRMACAO,
                     CLASSIFICACAO,
                     unid_int,
@@ -92,7 +92,7 @@ class PainelAcompCirurgiaController extends Controller
                     SaidaRpa Leito,
                     SIGNIN,
                     SIGNOUT,
-                    TIMEOUT,     
+                    TIMEOUT,
                     CONFIRMACAO,
                     CLASSIFICACAO,
                     unid_int,
@@ -132,7 +132,7 @@ class PainelAcompCirurgiaController extends Controller
                     DBAMV.FNCDES_P_STATUS_BLC(aviso_cirurgia.cd_aviso_cirurgia,'CLASSIFICACAO') CLASSIFICACAO,
                     DBAMV.FNCDES_P_STATUS_BLC(aviso_cirurgia.cd_aviso_cirurgia,'SIGNIN') SIGNIN,
                     DBAMV.FNCDES_P_STATUS_BLC(aviso_cirurgia.cd_aviso_cirurgia,'SIGNOUT') SIGNOUT,
-                    DBAMV.FNCDES_P_STATUS_BLC(aviso_cirurgia.cd_aviso_cirurgia,'TIMEOUT') TIMEOUT,     
+                    DBAMV.FNCDES_P_STATUS_BLC(aviso_cirurgia.cd_aviso_cirurgia,'TIMEOUT') TIMEOUT,
                     DBAMV.FNCDES_P_STATUS_BLC(aviso_cirurgia.cd_aviso_cirurgia,'CONFIRMACAO') CONFIRMACAO,
                     Nvl(age_cir.dt_inicio_age_cir,aviso_cirurgia.dt_aviso_cirurgia) DataPrevista,
                     Nvl(Mov_Cc_Rpa.Dt_Saida_Rpa,aviso_cirurgia.dt_aviso_cirurgia) DataSaidaRpa,
@@ -156,10 +156,9 @@ class PainelAcompCirurgiaController extends Controller
                     AND cen_cir.cd_cen_cir in ($cdBlocos)
                     AND Nvl(age_cir.dt_inicio_age_cir, aviso_cirurgia.dt_aviso_cirurgia) >= SYSDATE - 0.3
                     ORDER BY Hora
-                    ))"); 
-                
+                    ))");
+
     }
 
 }
 
-   

@@ -161,14 +161,14 @@
 
                             <!-- Risco de Queda -->
                             <td class="text-center bg-purple-pastel">
-                                @if($atendimento->rq > 0)
+                                @if($atendimento->rq > 24)
                                 <i class="material-icons text-danger animated pulse infinite">error_outline</i>
                                 @endif
                             </td>
 
                             <!-- Risco de LPP -->
                             <td class="text-center bg-purple-pastel">
-                                @if($atendimento->rlpp > 0)
+                                @if($atendimento->rlpp > 8)
                                 <i class="material-icons text-danger animated pulse infinite">error_outline</i>
                                 @endif
                             </td>

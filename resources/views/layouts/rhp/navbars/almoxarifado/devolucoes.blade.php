@@ -1,7 +1,7 @@
 <div class="row fixed-top bg-gray">
         <div class="col-md-1">
             <div class="logo-header text-center">
-                <img src="{{ asset('rhp') }}/img/icones/logo_rhp.png" alt="">
+                <img src="{{ asset('rhp') }}/img/logo-hospital-rodon.png" alt="">
             </div>
         </div>
         <div class="col-md-11 border-right">

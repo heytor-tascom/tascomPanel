@@ -1,7 +1,7 @@
 <div class="row fixed-top bg-gray">
     <div class="col-md-1">
         <div class="logo-header text-center">
-            <img src="{{ asset('rhp') }}/img/icones/logo_rhp.png" alt="">
+            <img src="{{ asset('rhp') }}/img/logo-hospital-rodon.png" alt="">
         </div>
     </div>
     <div class="col-md-5 border-right">
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="col-md-8">
-                <div class="d-flex align-items-center flex-wrap mt-3" style="height: 100%;">  
+                <div class="d-flex align-items-center flex-wrap mt-3" style="height: 100%;">
                     <div class="flex-fill mr-3">
                         @if(isset($setores))
                         @php
@@ -60,24 +60,24 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6 py-2 text-center">
         <div class="d-flex flex-column pt-4" style="height: 100%;">
             <div class="row">
                 <div class="col-md-12">
-    
+
                       <button type="button" id="todas" class="btn btn-secondary " onclick="trocaMetodo('todas')">TODAS
                         <span class="badge badge-danger ml-2" id="">{{ count($todas) ?? '0'}}</span>
                       </button>
-    
+
                       <button type="button" id="avulsas" class="btn btn-secondary button-bar" onclick="trocaMetodo('avulsas')">AVULSAS
                         <span class="badge badge-danger ml-2 " id="">{{ count($avulsas) ?? '0'}}</span>
                       </button>
-    
+
                       <button type="button" id="transferencias" class="btn btn-secondary button-bar" onclick="trocaMetodo('transferencias')">TRANSFERÊNCIAS
                         <span class="badge badge-danger ml-2 " id="">{{ count($transferencias) ?? '0'}}</span>
                       </button>
-    
+
                       <button type="button" id="devolucoes" class="btn btn-secondary button-bar" onclick="trocaMetodo('devolucoes')">DEVOLUÇÕES
                         <span class="badge badge-danger ml-2 " id="">{{ count($devolucoes) ?? '0'}}</span>
                       </button>
@@ -89,7 +89,7 @@
                       <button type="button" id="setor" class="btn btn-secondary button-bar" onclick="trocaMetodo('setor')">SETOR
                             <span class="badge badge-danger ml-2 " id="">{{ count($setorSolicitacao) ?? '0'}}</span>
                       </button>
-    
+
                       <button type="button" id="atendidas" class="btn btn-secondary button-bar" onclick="trocaMetodo('atendidas')">ATENDIDAS
                         <span class="badge badge-danger ml-2 " id="">{{ count($atendidas) ?? '0'}}</span>
                       </button>
@@ -115,38 +115,38 @@
 
                         <div class="row">
                             <div class="col-md-12" style="font-size:1.4em;"><i class="fas fa-reply" style="color:#c0392b;"></i>&nbsp; Devoluções </div>
-                        </div><hr/>    
-                        
+                        </div><hr/>
+
                         <div class="row">
                             <div class="col-md-12" style="font-size:1.4em;"><i class="fas fa-capsules text-warning"></i>&nbsp; Controlados </div>
                         </div><hr/>
-                        
+
                         <div class="row">
                             <div class="col-md-12" style="font-size:1.4em;"><img src="{{asset("tascom")}}/img/icones/{{$helperSituacaoSolic::situacaoSolicitacao('P') }}.png"> &nbsp;Não Atendido </div>
                         </div><hr/>
-                            
+
                         <div class="row">
                             <div class="col-md-12" style="font-size:1.4em;"><img src="{{asset("tascom")}}/img/icones/{{$helperSituacaoSolic::situacaoSolicitacao('C') }}.png">&nbsp; Parcial </div>
                         </div><hr/>
-                                
+
                         <div class="row">
                             <div class="col-md-12" style="font-size:1.4em;"><img src="{{asset("tascom")}}/img/icones/{{$helperSituacaoSolic::situacaoSolicitacao('S') }}.png">&nbsp; Atendido </div>
                         </div><hr/>
-                        
+
                         <div class="row">
                             <div class="col-md-12" style="font-size:1.4em;"><i class="fas fa-exclamation-triangle text-danger"></i>&nbsp; Urgente </div>
                         </div><hr/>
-                        
+
                         <div class="row">
                             <div class="col-md-12" style="font-size:1.4em; color: #333"><i class="fas fa-exclamation-triangle "></i>&nbsp; Não Urgente </div>
                         </div><hr/>
-                        
+
                         <div class="row">
                             <div class="col-md-12" style="font-size:1.4em;"><i class="fas fa-user-check" style="color: #00e089"></i>&nbsp; Alta Médica</div>
                         </div>
                         '
                         >LEGENDAS</button>
-                    
+
                   </div>
             </div>
         </div>

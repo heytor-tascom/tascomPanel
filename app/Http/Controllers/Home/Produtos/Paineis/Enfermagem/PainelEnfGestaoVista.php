@@ -121,9 +121,11 @@ class PainelEnfGestaoVista extends Controller
             $atendimentos[$key]->precaucao      = isset($precaucao[0]->ds_rgb_hexadecimal) ? $precaucao[0]->ds_rgb_hexadecimal : null;
             $atendimentos[$key]->exalab         = isset($exameLab[0]->lab) ? $exameLab[0]->lab : null;
             $atendimentos[$key]->exaimg         = isset($exameImagem[0]->img) ? $exameImagem[0]->img : null;
-            $atendimentos[$key]->rq             = isset($rq[0]->cd_avaliacao) ? $rq[0]->cd_avaliacao : null;
-            $atendimentos[$key]->rlpp           = isset($rlpp[0]->cd_avaliacao) ? $rlpp[0]->cd_avaliacao : null;
+            $atendimentos[$key]->rq             = isset($rq[0]->cd_avaliacao) ? $rq[0]->cd_avaliacao : 0;
+            $atendimentos[$key]->rlpp           = isset($rlpp[0]->cd_avaliacao) ? $rlpp[0]->cd_avaliacao : 0;
         }
+
+        // dd($atendimentos);
 
         return view('home.produtos.paineis.enfermagem.gestao-a-vista.index', compact('title', 'atendimentos', 'setores', 'setorId'));
     }
@@ -220,13 +222,13 @@ class PainelEnfGestaoVista extends Controller
     {
         return DB::connection('oracle')
                     ->select("
-                    SELECT 	CD_AVALIACAO
+                    SELECT 	VL_RESULTADO
                     FROM 	PAGU_AVALIACAO
                     WHERE 	PAGU_AVALIACAO.CD_AVALIACAO		= (
                                 SELECT 	MAX(CD_AVALIACAO)
                                 FROM 	PAGU_AVALIACAO A,
                                         PW_DOCUMENTO_CLINICO
-                                WHERE 	A.CD_FORMULA 		= 31
+                                WHERE 	A.CD_FORMULA 		= 11
                                 AND 	A.CD_ATENDIMENTO 	= $atendimentoId
                                 AND 	PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO = A.CD_DOCUMENTO_CLINICO
                                 AND 	PW_DOCUMENTO_CLINICO.TP_STATUS IN ('FECHADO', 'ASSINADO')
@@ -240,13 +242,13 @@ class PainelEnfGestaoVista extends Controller
     {
         return DB::connection('oracle')
                     ->select("
-                    SELECT 	CD_AVALIACAO
+                    SELECT 	VL_RESULTADO
                     FROM 	PAGU_AVALIACAO
                     WHERE 	PAGU_AVALIACAO.CD_AVALIACAO		= (
                                 SELECT 	MAX(CD_AVALIACAO)
                                 FROM 	PAGU_AVALIACAO A,
                                         PW_DOCUMENTO_CLINICO
-                                WHERE 	A.CD_FORMULA 		= 32
+                                WHERE 	A.CD_FORMULA 		= 8
                                 AND 	A.CD_ATENDIMENTO 	= $atendimentoId
                                 AND 	PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO = A.CD_DOCUMENTO_CLINICO
                                 AND 	PW_DOCUMENTO_CLINICO.TP_STATUS IN ('FECHADO', 'ASSINADO')

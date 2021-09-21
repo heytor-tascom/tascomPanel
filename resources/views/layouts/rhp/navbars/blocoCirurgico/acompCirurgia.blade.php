@@ -1,7 +1,7 @@
 <div class="row fixed-top bg-gray">
     <div class="col-md-1">
         <div class="logo-header text-center">
-            <img src="{{ asset('rhp') }}/img/icones/logo_rhp.png" alt="">
+            <img src="{{ asset('rhp') }}/img/logo-hospital-rodon.png" alt="">
         </div>
     </div>
     <div class="col-md-5 ">
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="d-flex align-items-center flex-wrap mt-3" style="height: 100%;">  
+                <div class="d-flex align-items-center flex-wrap mt-3" style="height: 100%;">
                     <div class="flex-fill mr-3">
                         @if(isset($blocos))
                         @php
@@ -45,13 +45,13 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6 py-2 text-center">
-   
+
             <div class="row">
                 <div class="col-md-12">
-    
-                     
+
+
                       <button type="button" class="btn btn-secondary " >
                         <i class="fas fa-circle" style="color:green;"></i> CIRURGIA NO HORÁRIO
                       </button>
@@ -74,7 +74,7 @@
 
 @push('scripts')
 <script>
-    
+
 $(".selectpicker").selectpicker({
         noneSelectedText: "Selecione um Bloco Cirúrgico",
         noneResultsText: "Nenhum Bloco Cirúrgico encontrado",
